@@ -1,0 +1,9 @@
+site_name: pinax-documents
+pages:
+- [index.md, Home]
+- [changelog.md, Change Log]
+theme: readthedocs
+repo_url: https://github.com/pinax/pinax-documents
+site_description: a document management app for Django
+site_author: Pinax Developers
+markdown_extensions: [admonition]
