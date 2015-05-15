@@ -18,7 +18,7 @@ pinax-documents
 .. image:: https://img.shields.io/pypi/v/pinax-documents.svg
     :target:  https://pypi.python.org/pypi/pinax-documents/
 
-.. image:: https://img.shields.io/badge/license-<license>-blue.svg
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg
     :target:  https://pypi.python.org/pypi/pinax-documents/
 
 
