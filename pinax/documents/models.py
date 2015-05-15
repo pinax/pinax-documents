@@ -15,7 +15,7 @@ try:
 except ImportError:
     user_signed_up = None
 
-from .managers import FolderManager, DocumentManager
+from .managers import FolderManager, FolderQuerySet, DocumentQuerySet
 
 
 def uuid_filename(instance, filename):
@@ -33,7 +33,7 @@ class Folder(models.Model):
     modified = models.DateTimeField(default=timezone.now)
     modified_by = models.ForeignKey(User, related_name="+")
 
-    objects = FolderManager()
+    objects = FolderManager.from_queryset(FolderQuerySet)()
 
     kind = "folder"
     icon = "folder-open"
@@ -175,7 +175,7 @@ class Document(models.Model):
     modified_by = models.ForeignKey(User, related_name="+")
     file = models.FileField(upload_to=uuid_filename)
 
-    objects = DocumentManager()
+    objects = DocumentQuerySet.as_manager()
 
     kind = "document"
     icon = "file"

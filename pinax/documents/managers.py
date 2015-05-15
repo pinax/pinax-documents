@@ -7,13 +7,8 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.query import QuerySet
 
-from model_utils.managers import PassThroughManager
 
-
-class FolderManager(PassThroughManager):
-
-    def get_query_set(self):
-        return FolderQuerySet(self.model, using=self._db)
+class FolderManager(models.Manager):
 
     def members(self, folder, **kwargs):
         direct = kwargs.get("direct", True)
@@ -30,12 +25,6 @@ class FolderManager(PassThroughManager):
         for child in folders:
             M.extend(self.members(child, **kwargs))
         return M
-
-
-class DocumentManager(PassThroughManager):
-
-    def get_query_set(self):
-        return DocumentQuerySet(self.model, using=self._db)
 
 
 class FolderQuerySet(QuerySet):
