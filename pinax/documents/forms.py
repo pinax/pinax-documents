@@ -2,7 +2,11 @@ from django import forms
 
 from django.contrib.auth.models import User
 
-from account.utils import user_display
+try:
+    from account.utils import user_display
+except ImportError:
+    def user_display(user):
+        return user.username
 
 from .models import Folder
 

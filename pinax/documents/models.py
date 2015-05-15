@@ -10,7 +10,10 @@ from django.utils import timezone
 
 from django.contrib.auth.models import User
 
-from account.signals import user_signed_up
+try:
+    from account.signals import user_signed_up
+except ImportError:
+    user_signed_up = None
 
 from .managers import FolderManager, DocumentManager
 from .utils import convert_bytes
@@ -314,7 +317,8 @@ class UserStorage(models.Model):
         raise ValueError("percentage out of range")
 
 
-@receiver(user_signed_up)
-def handle_user_signed_up(sender, **kwargs):
-    user = kwargs["user"]
-    UserStorage.objects.create(user=user, bytes_total=(1024*1024*50))
+if user_signed_up is not None:
+    @receiver(user_signed_up)
+    def handle_user_signed_up(sender, **kwargs):
+        user = kwargs["user"]
+        UserStorage.objects.create(user=user, bytes_total=(1024*1024*50))
