@@ -1,6 +1,6 @@
 from django import forms
 
-from django.contrib.auth.models import User
+from django.contrib.auth import User
 
 try:
     from account.utils import user_display

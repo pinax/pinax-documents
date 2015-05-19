@@ -8,13 +8,14 @@ from django.db import models
 from django.dispatch import receiver
 from django.utils import timezone
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 try:
     from account.signals import user_signed_up
 except ImportError:
     user_signed_up = None
 
+from .conf import settings
 from .managers import FolderManager, FolderQuerySet, DocumentQuerySet
 
 
@@ -28,10 +29,10 @@ class Folder(models.Model):
 
     name = models.CharField(max_length=140)
     parent = models.ForeignKey("self", null=True, blank=True)
-    author = models.ForeignKey(User, related_name="+")
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+")
     created = models.DateTimeField(default=timezone.now)
     modified = models.DateTimeField(default=timezone.now)
-    modified_by = models.ForeignKey(User, related_name="+")
+    modified_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+")
 
     objects = FolderManager.from_queryset(FolderQuerySet)()
 
@@ -112,6 +113,7 @@ class Folder(models.Model):
         Returns a User queryset of users shared on this folder, or, if user
         is given optimizes the check and returns boolean.
         """
+        User = get_user_model()
         qs = self.shared_queryset()
         if user is not None:
             return qs.filter(user=user).exists()
@@ -169,10 +171,10 @@ class Document(models.Model):
 
     name = models.CharField(max_length=255)
     folder = models.ForeignKey(Folder, null=True)
-    author = models.ForeignKey(User, related_name="+")
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+")
     created = models.DateTimeField(default=timezone.now)
     modified = models.DateTimeField(default=timezone.now)
-    modified_by = models.ForeignKey(User, related_name="+")
+    modified_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+")
     file = models.FileField(upload_to=uuid_filename)
 
     objects = DocumentQuerySet.as_manager()
@@ -242,6 +244,7 @@ class Document(models.Model):
         Returns a User queryset of users shared on this folder, or, if user
         is given optimizes the check and returns boolean.
         """
+        User = get_user_model()
         qs = self.shared_queryset()
         if user is not None:
             return qs.filter(user=user).exists()
@@ -264,7 +267,7 @@ class Document(models.Model):
 
 class MemberSharedUser(models.Model):
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     # @@@ priviledges
 
     class Meta:
@@ -296,7 +299,7 @@ class DocumentSharedUser(MemberSharedUser):
 
 class UserStorage(models.Model):
 
-    user = models.OneToOneField(User, related_name="storage")
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name="storage")
     bytes_used = models.BigIntegerField(default=0)
     bytes_total = models.BigIntegerField(default=0)
 
