@@ -2,7 +2,7 @@ import functools
 import itertools
 import operator
 
-import django.db.models
+from django.apps import apps
 from django.db import models
 from django.db.models import Q
 from django.db.models.query import QuerySet
@@ -13,7 +13,7 @@ class FolderManager(models.Manager):
     def members(self, folder, **kwargs):
         direct = kwargs.get("direct", True)
         user = kwargs.get("user")
-        Document = django.db.models.loading.cache.get_model("documents", "Document")
+        Document = apps.get_model("documents", "Document")
         folders = self.filter(parent=folder)
         documents = Document.objects.filter(folder=folder)
         if user:
@@ -52,7 +52,8 @@ class DocumentQuerySet(QuerySet):
 class SharedMemberQuerySet(QuerySet):
 
     def __init__(self, **kwargs):
-        self.user = kwargs.pop("user")
+        if "user" in kwargs:
+            self.user = kwargs.pop("user")
         super(SharedMemberQuerySet, self).__init__(**kwargs)
 
     def iterator(self):
@@ -63,8 +64,6 @@ class SharedMemberQuerySet(QuerySet):
                 obj._shared = True
             yield obj
 
-    def _clone(self, klass=None, **kwargs):
-        if klass is None:
-            klass = self.__class__
-        kwargs["klass"] = functools.partial(klass, user=self.user)
+    def _clone(self, **kwargs):
+        kwargs["user"] = self.user
         return super(SharedMemberQuerySet, self)._clone(**kwargs)
