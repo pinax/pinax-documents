@@ -5,15 +5,11 @@ import uuid
 
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 
 from django.contrib.auth import get_user_model
-
-try:
-    from account.signals import user_signed_up
-except ImportError:
-    user_signed_up = None
 
 from .conf import settings
 from .managers import FolderManager, FolderQuerySet, DocumentQuerySet
@@ -319,8 +315,8 @@ class UserStorage(models.Model):
         raise ValueError("percentage out of range")
 
 
-if user_signed_up is not None:
-    @receiver(user_signed_up)
-    def handle_user_signed_up(sender, **kwargs):
-        user = kwargs["user"]
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def ensure_userstorage(sender, **kwargs):
+    if kwargs["created"]:
+        user = kwargs["instance"]
         UserStorage.objects.create(user=user, bytes_total=(1024 * 1024 * 50))
