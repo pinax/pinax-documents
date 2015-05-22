@@ -95,7 +95,7 @@ def document_create(request):
     if request.method == "POST":
         form = DocumentCreateForm(request.POST, request.FILES, **form_kwargs)
         if form.is_valid():
-            with transaction.commit_on_success():
+            with transaction.atomic():
                 bytes = form.cleaned_data["file"].size
                 kwargs = {
                     "name": form.cleaned_data["file"].name,
