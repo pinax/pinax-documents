@@ -16,7 +16,7 @@ setup(
     description="a document management app for Django",
     name="pinax-documents",
     long_description=read("README.rst"),
-    version="0.1",
+    version="0.2.0.dev1",
     url="http://pinax-documents.rtfd.org/",
     license="MIT",
     packages=find_packages(),
