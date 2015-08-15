@@ -159,7 +159,7 @@ def folder_share(request, pk):
     if not folder.can_share(request.user):
         raise Http404()
     form_kwargs = {
-        "colleagues": User.objects.filter(pk__in=[u.pk for u in Relationship.set_for_user(request.user)])
+        "colleagues": User.objects.all()  # @@@ make this a hookset to be defined at site level
     }
     if request.method == "POST":
         if "remove" in request.POST:
