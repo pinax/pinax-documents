@@ -22,7 +22,7 @@ pinax-documents
     :target:  https://pypi.python.org/pypi/pinax-documents/
 
 
-Pinax-documents is a document management app for Django.
+pinax-documents is a document management app for Django.
 
 Pinax is an open-source platform built on the Django Web Framework. It is an ecosystem of reusable Django apps, themes, and starter project templates. 
 This collection can be found at http://pinaxproject.com.
