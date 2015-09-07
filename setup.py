@@ -11,8 +11,8 @@ def read(*parts):
 
 
 setup(
-    author="Pinax Developers",
-    author_email="developers@pinaxprojects.com",
+    author="Pinax Team",
+    author_email="team@pinaxproject.com",
     description="a document management app for Django",
     name="pinax-documents",
     long_description=read("README.rst"),
