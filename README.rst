@@ -48,6 +48,7 @@ Running the Tests
 
 Documentation
 ---------------
+Documentation can be found in the `docs <./docs>`_ folder.
 
 The Pinax documentation is available at http://pinaxproject.com/pinax/.
 
