@@ -22,7 +22,7 @@ DEFAULT_SETTINGS = dict(
         }
     },
     SITE_ID=1,
-    ROOT_URLCONF="documents.tests.urls",
+    ROOT_URLCONF="pinax.documents.tests.urls",
     SECRET_KEY="notasecret",
 )
 
