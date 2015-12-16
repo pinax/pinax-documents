@@ -11,6 +11,7 @@ from django.utils import timezone
 
 from django.contrib.auth import get_user_model
 
+from .compat import izip_longest
 from .conf import settings
 from .managers import FolderManager, FolderQuerySet, DocumentQuerySet
 
@@ -125,7 +126,7 @@ class Folder(models.Model):
         root = self
         a, b = itertools.tee(reversed(self.breadcrumbs()))
         next(b, None)
-        for folder, parent in itertools.izip_longest(a, b):
+        for folder, parent in izip_longest(a, b):
             if folder.shared:
                 root = folder
             if parent is None or not parent.shared:
