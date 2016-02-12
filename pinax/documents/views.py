@@ -22,7 +22,7 @@ from .models import Folder, Document, UserStorage
 
 class IndexView(LoginRequiredMixin, TemplateView):
 
-    template_name = "documents/index.html"
+    template_name = "pinax/documents/index.html"
 
     def get_context_data(self, **kwargs):
         ctx = kwargs
@@ -66,7 +66,7 @@ def folder_create(request):
         "form": form,
         "parent": parent,
     }
-    return render(request, "documents/folder_create.html", ctx)
+    return render(request, "pinax/documents/folder_create.html", ctx)
 
 
 @login_required
@@ -78,7 +78,7 @@ def folder_detail(request, pk):
         "members": folder.members(user=request.user),
         "can_share": folder.can_share(request.user),
     }
-    return render(request, "documents/folder_detail.html", ctx)
+    return render(request, "pinax/documents/folder_detail.html", ctx)
 
 
 @login_required
@@ -123,7 +123,7 @@ def document_create(request):
         "form": form,
         "folder": folder,
     }
-    return render(request, "documents/document_create.html", ctx)
+    return render(request, "pinax/documents/document_create.html", ctx)
 
 
 @login_required
@@ -133,7 +133,7 @@ def document_detail(request, pk):
     ctx = {
         "document": document,
     }
-    return render(request, "documents/document_detail.html", ctx)
+    return render(request, "pinax/documents/document_detail.html", ctx)
 
 
 @login_required
@@ -178,7 +178,7 @@ def folder_share(request, pk):
         "form": form,
         "participants": folder.shared_with(),
     }
-    return render(request, "documents/folder_share.html", ctx)
+    return render(request, "pinax/documents/folder_share.html", ctx)
 
 
 def document_delete(request):
