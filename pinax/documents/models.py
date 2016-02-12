@@ -49,7 +49,7 @@ class Folder(models.Model):
         super(Folder, self).save(**kwargs)
 
     def get_absolute_url(self):
-        return reverse("documents_folder_detail", args=[self.pk])
+        return reverse("pinax_documents_folder_detail", args=[self.pk])
 
     def unique_id(self):
         return "f-%d" % self.id
@@ -192,7 +192,7 @@ class Document(models.Model):
         super(Document, self).save(**kwargs)
 
     def get_absolute_url(self):
-        return reverse("documents_document_detail", args=[self.pk])
+        return reverse("pinax_documents_document_detail", args=[self.pk])
 
     def unique_id(self):
         return "d-%d" % self.id
@@ -259,7 +259,7 @@ class Document(models.Model):
             model._default_manager.bulk_create(objs)
 
     def download_url(self):
-        return reverse("documents_document_download", args=[self.pk, os.path.basename(self.file.name).lower()])
+        return reverse("pinax_documents_document_download", args=[self.pk, os.path.basename(self.file.name).lower()])
 
 
 class MemberSharedUser(models.Model):
