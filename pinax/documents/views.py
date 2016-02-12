@@ -165,7 +165,7 @@ def folder_share(request, pk):
         if "remove" in request.POST:
             user_to_remove = User.objects.get(pk=request.POST["remove"])
             messages.success(request, "{} has been removed from folder share".format(user_display(user_to_remove)))
-            return redirect("documents_folder_share", folder.pk)
+            return redirect("pinax_documents_folder_share", folder.pk)
         else:
             form = ColleagueFolderShareForm(request.POST, **form_kwargs)
             if form.is_valid():
@@ -182,6 +182,6 @@ def folder_share(request, pk):
 
 
 def document_delete(request):
-    redirect_to = default_redirect(request, reverse("documents_index"))
+    redirect_to = default_redirect(request, reverse("pinax_documents_index"))
     messages.success(request, "Document has been deleted")
     return redirect(redirect_to)
