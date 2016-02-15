@@ -22,8 +22,8 @@ class TestFolders(TestViews):
 
     def setUp(self):
         super(TestFolders, self).setUp()
-        self.create_urlname = "documents_folder_create"
-        self.detail_urlname = "documents_folder_detail"
+        self.create_urlname = "pinax_documents_folder_create"
+        self.detail_urlname = "pinax_documents_folder_detail"
 
     def test_get_create_without_parent(self):
         """
@@ -123,8 +123,8 @@ class TestDocuments(TestViews):
 
     def setUp(self):
         super(TestDocuments, self).setUp()
-        self.create_urlname = "documents_document_create"
-        self.detail_urlname = "documents_document_detail"
+        self.create_urlname = "pinax_documents_document_create"
+        self.detail_urlname = "pinax_documents_document_detail"
 
     def test_get_create_without_folder(self):
         """
@@ -235,7 +235,7 @@ class TestDocuments(TestViews):
 
         doc_pk = document.pk
         with self.login(self.user):
-            response = self.post("documents_document_delete", pk=doc_pk, follow=True)
+            response = self.post("pinax_documents_document_delete", pk=doc_pk, follow=True)
             self.response_200(response)
             self.assertFalse(Document.objects.filter(pk=doc_pk))
 

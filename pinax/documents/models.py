@@ -5,8 +5,6 @@ import uuid
 
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils import timezone
 
 from django.contrib.auth import get_user_model
@@ -49,7 +47,7 @@ class Folder(models.Model):
         super(Folder, self).save(**kwargs)
 
     def get_absolute_url(self):
-        return reverse("documents_folder_detail", args=[self.pk])
+        return reverse("pinax_documents_folder_detail", args=[self.pk])
 
     def unique_id(self):
         return "f-%d" % self.id
@@ -192,7 +190,7 @@ class Document(models.Model):
         super(Document, self).save(**kwargs)
 
     def get_absolute_url(self):
-        return reverse("documents_document_detail", args=[self.pk])
+        return reverse("pinax_documents_document_detail", args=[self.pk])
 
     def unique_id(self):
         return "d-%d" % self.id
@@ -259,7 +257,7 @@ class Document(models.Model):
             model._default_manager.bulk_create(objs)
 
     def download_url(self):
-        return reverse("documents_document_download", args=[self.pk, os.path.basename(self.file.name).lower()])
+        return reverse("pinax_documents_document_download", args=[self.pk, os.path.basename(self.file.name).lower()])
 
 
 class MemberSharedUser(models.Model):
@@ -314,10 +312,3 @@ class UserStorage(models.Model):
         if p >= 90 and p <= 100:
             return "danger"
         raise ValueError("percentage out of range")
-
-
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def ensure_userstorage(sender, **kwargs):
-    if kwargs["created"]:
-        user = kwargs["instance"]
-        UserStorage.objects.create(user=user, bytes_total=(1024 * 1024 * 50))

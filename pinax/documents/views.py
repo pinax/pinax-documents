@@ -205,7 +205,7 @@ def folder_share(request, pk):
         if "remove" in request.POST:
             user_to_remove = User.objects.get(pk=request.POST["remove"])
             messages.success(request, "{} has been removed from folder share".format(user_display(user_to_remove)))
-            return redirect("documents_folder_share", folder.pk)
+            return redirect("pinax_documents_folder_share", folder.pk)
         else:
             form = ColleagueFolderShareForm(request.POST, **form_kwargs)
             if form.is_valid():
@@ -218,12 +218,12 @@ def folder_share(request, pk):
         "form": form,
         "participants": folder.shared_with(),
     }
-    return render(request, "documents/folder_share.html", ctx)
+    return render(request, "pinax/documents/folder_share.html", ctx)
 
 
 class DocumentDelete(LoginRequiredMixin, DeleteView):
     model = Document
-    success_url = reverse_lazy("documents_index")
+    success_url = reverse_lazy("pinax_documents_index")
 
     def delete(self, request, *args, **kwargs):
         success_url = super(DocumentDelete, self).delete(request, *args, **kwargs)
