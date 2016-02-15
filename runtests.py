@@ -12,8 +12,16 @@ DEFAULT_SETTINGS = dict(
         "django.contrib.auth",
         "django.contrib.contenttypes",
         "django.contrib.sites",
+        "django.contrib.sessions",
         "pinax.documents",
-        "pinax.documents.tests"
+        "pinax.documents.tests",
+        "pinax_theme_bootstrap",
+        "bootstrapform",
+    ],
+    MIDDLEWARE_CLASSES = [
+        "django.contrib.sessions.middleware.SessionMiddleware",
+        "django.contrib.auth.middleware.AuthenticationMiddleware",
+        "django.contrib.auth.middleware.SessionAuthenticationMiddleware",
     ],
     DATABASES={
         "default": {

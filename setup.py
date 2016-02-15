@@ -25,7 +25,10 @@ setup(
     },
     test_suite="runtests.runtests",
     tests_require=[
-        "django-appconf>=1.0.1"
+        "django-appconf>=1.0.1",
+        "django-test-plus>=1.0.11",
+        "mock>=1.3.0",
+        "pinax-theme-bootstrap>=7.2.0",
     ],
     install_requires=[
         "django-appconf>=1.0.1"

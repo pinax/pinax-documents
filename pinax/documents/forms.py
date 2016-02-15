@@ -6,17 +6,20 @@ except ImportError:
     def user_display(user):
         return user.username
 
-from .models import Folder
+from .models import (
+    Document,
+    Folder,
+)
 
 
-class FolderCreateForm(forms.Form):
+class FolderCreateForm(forms.ModelForm):
 
-    name = forms.CharField(max_length=140)
-    parent = forms.ModelChoiceField(
-        queryset=Folder.objects.none(),
-        widget=forms.HiddenInput,
-        required=False,
-    )
+    class Meta:
+        model = Folder
+        fields = ["name", "parent"]
+        widgets = {
+            "parent": forms.HiddenInput,
+        }
 
     def __init__(self, *args, **kwargs):
         folders = kwargs.pop("folders")
@@ -24,14 +27,14 @@ class FolderCreateForm(forms.Form):
         self.fields["parent"].queryset = folders
 
 
-class DocumentCreateForm(forms.Form):
+class DocumentCreateForm(forms.ModelForm):
 
-    folder = forms.ModelChoiceField(
-        queryset=Folder.objects.none(),
-        widget=forms.HiddenInput,
-        required=False,
-    )
-    file = forms.FileField()
+    class Meta:
+        model = Document
+        fields = ["folder", "file"]
+        widgets = {
+            "folder": forms.HiddenInput,
+        }
 
     def __init__(self, *args, **kwargs):
         folders = kwargs.pop("folders")

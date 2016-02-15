@@ -167,7 +167,7 @@ class Folder(models.Model):
 class Document(models.Model):
 
     name = models.CharField(max_length=255)
-    folder = models.ForeignKey(Folder, null=True)
+    folder = models.ForeignKey(Folder, null=True, blank=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+")
     created = models.DateTimeField(default=timezone.now)
     modified = models.DateTimeField(default=timezone.now)
