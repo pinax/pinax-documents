@@ -1,4 +1,4 @@
-from mock import patch
+import mock
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 
@@ -13,30 +13,9 @@ class TestViews(TestCase):
 
     def setUp(self):
         """
-        Create default Folders and Documents.
+        Create default User.
         """
-        # Mock "messages" app.
-        patcher = patch('django.contrib.messages.success')
-        self.addCleanup(patcher.stop)
-        patcher.start()
-
         self.user = self.make_user("eldarion")
-
-        self.fruit_folder = Folder.objects.create(name="Fruit", author=self.user)
-        self.apple_folder = Folder.objects.create(name="Apples", author=self.user,
-                                                  parent=self.fruit_folder)
-        self.orange_folder = Folder.objects.create(name="Oranges", author=self.user,
-                                                   parent=self.fruit_folder)
-
-        apple_file = SimpleUploadedFile("honeycrisp.txt",
-                                        "Honeycrisp apple")
-
-        # Create one Document in the Apples Folder.
-        self.apple_doc = Document.objects.create(name="Honeycrisp",
-                                                 author=self.user,
-                                                 folder=self.apple_folder,
-                                                 file=apple_file,
-                                                 )
 
 
 class TestFolders(TestViews):
@@ -59,11 +38,13 @@ class TestFolders(TestViews):
         """
         Ensure GET returns a valid 'parent' folder in context.
         """
-        querystring_data = {"p": self.fruit_folder.pk}
+        parent_folder = Folder.objects.create(name="Parent", author=self.user)
+
+        querystring_data = {"p": parent_folder.pk}
         with self.login(self.user):
             response = self.get(self.create_urlname, data=querystring_data)
             self.response_200(response)
-            self.assertContext("parent", self.fruit_folder)
+            self.assertContext("parent", parent_folder)
 
     def test_get_create_with_illegal_parent(self):
         """
@@ -91,13 +72,15 @@ class TestFolders(TestViews):
         """
         Ensure POST creates folder with a parent.
         """
+        parent_folder = Folder.objects.create(name="Parent", author=self.user)
+
         folder_name = "Spindle"
-        post_args = {"name": folder_name, "parent": self.fruit_folder.pk}
+        post_args = {"name": folder_name, "parent": parent_folder.pk}
         with self.login(self.user):
             response = self.post(self.create_urlname, data=post_args, follow=True)
             self.response_200(response)
             created = self.get_context("object")
-            self.assertEqual(created.parent, self.fruit_folder)
+            self.assertEqual(created.parent, parent_folder)
             self.assertTrue(Folder.objects.get(name=folder_name))
 
     def test_post_create_with_illegal_parent(self):
@@ -116,10 +99,12 @@ class TestFolders(TestViews):
         """
         Ensure we can see folder detail.
         """
+        parent_folder = Folder.objects.create(name="Parent", author=self.user)
+
         with self.login(self.user):
-            self.get_check_200(self.detail_urlname, pk=self.fruit_folder.pk)
+            self.get_check_200(self.detail_urlname, pk=parent_folder.pk)
             folder = self.get_context("object")
-            self.assertEqual(folder, self.fruit_folder)
+            self.assertEqual(folder, parent_folder)
 
     def test_duplicate_folder_name(self):
         """
@@ -140,9 +125,6 @@ class TestDocuments(TestViews):
         super(TestDocuments, self).setUp()
         self.create_urlname = "documents_document_create"
         self.detail_urlname = "documents_document_detail"
-        self.file = SimpleUploadedFile("delicious.txt",
-                                       "Golden Delicious apple")
-
 
     def test_get_create_without_folder(self):
         """
@@ -157,11 +139,13 @@ class TestDocuments(TestViews):
         """
         Ensure GET returns a valid 'folder' in context.
         """
-        querystring_data = {"f": self.orange_folder.pk}
+        parent_folder = Folder.objects.create(name="Parent", author=self.user)
+
+        querystring_data = {"f": parent_folder.pk}
         with self.login(self.user):
             response = self.get(self.create_urlname, data=querystring_data)
             self.response_200(response)
-            self.assertContext("folder", self.orange_folder)
+            self.assertContext("folder", parent_folder)
 
     def test_get_create_with_illegal_folder(self):
         """
@@ -176,58 +160,86 @@ class TestDocuments(TestViews):
         """
         Ensure POST creates document without a folder.
         """
-        post_args = {"name": "file", "file": self.file}
+        simple_file = SimpleUploadedFile("delicious.txt",
+                                         "Golden Delicious apple")
+
+        post_args = {"name": "file", "file": simple_file}
         with self.login(self.user):
             response = self.post(self.create_urlname, data=post_args, follow=True)
             self.response_200(response)
             created = self.get_context("object")
             self.assertFalse(created.folder)
-            self.assertTrue(Document.objects.get(name=self.file.name))
+            self.assertTrue(Document.objects.get(name=simple_file.name))
 
     def test_post_create_with_parent(self):
         """
         Ensure POST creates document associated with a folder.
         """
-        post_args = {"name": "file", "file": self.file, "folder": self.apple_folder.pk}
+        parent_folder = Folder.objects.create(name="Parent", author=self.user)
+        simple_file = SimpleUploadedFile("delicious.txt",
+                                         "Golden Delicious apple")
+
+        post_args = {"name": "file", "file": simple_file, "folder": parent_folder.pk}
         with self.login(self.user):
             response = self.post(self.create_urlname, data=post_args, follow=True)
             self.response_200(response)
             created = self.get_context("object")
-            self.assertEqual(created.folder, self.apple_folder)
-            self.assertTrue(Document.objects.get(name=self.file.name))
+            self.assertEqual(created.folder, parent_folder)
+            self.assertTrue(Document.objects.get(name=simple_file.name))
 
     def test_post_create_with_illegal_parent(self):
         """
         Ensure POST does not create a document with invalid folder.
         """
-        post_args = {"name": "file", "file": self.file, "folder": 555}
+        simple_file = SimpleUploadedFile("delicious.txt",
+                                         "Golden Delicious apple")
+
+        post_args = {"name": "file", "file": simple_file, "folder": 555}
         with self.login(self.user):
             response = self.post(self.create_urlname, data=post_args, follow=True)
             self.response_200(response)
             self.assertFalse("object" in self.last_response.context)
-            self.assertFalse(Document.objects.filter(name=self.file.name))
+            self.assertFalse(Document.objects.filter(name=simple_file.name))
 
     def test_detail(self):
         """
         Ensure we can see document detail.
         """
+        simple_file = SimpleUploadedFile("delicious.txt",
+                                         "Golden Delicious apple")
+        document = Document.objects.create(name="Honeycrisp",
+                                           author=self.user,
+                                           file=simple_file,
+                                           )
+
         with self.login(self.user):
-            self.get_check_200(self.detail_urlname, pk=self.apple_doc.pk)
-            document = self.get_context("object")
-            self.assertEqual(document, self.apple_doc)
+            self.get_check_200(self.detail_urlname, pk=document.pk)
+            context_document = self.get_context("object")
+            self.assertEqual(context_document, document)
 
     def test_valid_delete(self):
         """
         Ensure we can delete a valid Document.
         """
-        doc_pk = self.apple_doc.pk
+        # Mock "messages" app.
+        patcher = mock.patch('django.contrib.messages.success')
+        self.addCleanup(patcher.stop)
+        patcher.start()
+
+        simple_file = SimpleUploadedFile("delicious.txt",
+                                         "Golden Delicious apple")
+        document = Document.objects.create(name="Honeycrisp",
+                                           author=self.user,
+                                           file=simple_file,
+                                           )
+
+        doc_pk = document.pk
         with self.login(self.user):
             response = self.post("documents_document_delete", pk=doc_pk, follow=True)
             self.response_200(response)
             self.assertFalse(Document.objects.filter(pk=doc_pk))
 
             # TODO: Ensure the actual file is removed from storage.
-            self.assertTrue(False)
 
     def test_invalid_delete(self):
         """

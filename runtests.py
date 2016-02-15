@@ -32,6 +32,7 @@ DEFAULT_SETTINGS = dict(
     SITE_ID=1,
     ROOT_URLCONF="pinax.documents.tests.urls",
     SECRET_KEY="notasecret",
+    DEFAULT_FILE_STORAGE = 'inmemorystorage.InMemoryStorage',
 )
 
 

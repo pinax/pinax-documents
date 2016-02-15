@@ -25,6 +25,7 @@ setup(
     },
     test_suite="runtests.runtests",
     tests_require=[
+        "dj-inmemorystorage>=1.4.0",
         "django-appconf>=1.0.1",
         "django-test-plus>=1.0.11",
         "mock>=1.3.0",
