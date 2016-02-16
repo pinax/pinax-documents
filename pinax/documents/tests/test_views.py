@@ -125,6 +125,7 @@ class TestDocuments(TestViews):
         super(TestDocuments, self).setUp()
         self.create_urlname = "pinax_documents_document_create"
         self.detail_urlname = "pinax_documents_document_detail"
+        self.file_contents = b"Golden Delicious apple"
 
     def test_get_create_without_folder(self):
         """
@@ -160,8 +161,7 @@ class TestDocuments(TestViews):
         """
         Ensure POST creates document without a folder.
         """
-        simple_file = SimpleUploadedFile("delicious.txt",
-                                         bytes("Golden Delicious apple"))
+        simple_file = SimpleUploadedFile("delicious.txt", self.file_contents)
 
         post_args = {"name": "file", "file": simple_file}
         with self.login(self.user):
@@ -176,8 +176,7 @@ class TestDocuments(TestViews):
         Ensure POST creates document associated with a folder.
         """
         parent_folder = Folder.objects.create(name="Parent", author=self.user)
-        simple_file = SimpleUploadedFile("delicious.txt",
-                                         bytes("Golden Delicious apple"))
+        simple_file = SimpleUploadedFile("delicious.txt", self.file_contents)
 
         post_args = {"name": "file", "file": simple_file, "folder": parent_folder.pk}
         with self.login(self.user):
@@ -191,8 +190,7 @@ class TestDocuments(TestViews):
         """
         Ensure POST does not create a document with invalid folder.
         """
-        simple_file = SimpleUploadedFile("delicious.txt",
-                                         bytes("Golden Delicious apple"))
+        simple_file = SimpleUploadedFile("delicious.txt", self.file_contents)
 
         post_args = {"name": "file", "file": simple_file, "folder": 555}
         with self.login(self.user):
@@ -205,8 +203,7 @@ class TestDocuments(TestViews):
         """
         Ensure we can see document detail.
         """
-        simple_file = SimpleUploadedFile("delicious.txt",
-                                         bytes("Golden Delicious apple"))
+        simple_file = SimpleUploadedFile("delicious.txt", self.file_contents)
         document = Document.objects.create(name="Honeycrisp",
                                            author=self.user,
                                            file=simple_file,
@@ -226,8 +223,7 @@ class TestDocuments(TestViews):
         self.addCleanup(patcher.stop)
         patcher.start()
 
-        simple_file = SimpleUploadedFile("delicious.txt",
-                                         bytes("Golden Delicious apple"))
+        simple_file = SimpleUploadedFile("delicious.txt", self.file_contents)
         document = Document.objects.create(name="Honeycrisp",
                                            author=self.user,
                                            file=simple_file,
