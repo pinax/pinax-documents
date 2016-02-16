@@ -161,7 +161,7 @@ class TestDocuments(TestViews):
         Ensure POST creates document without a folder.
         """
         simple_file = SimpleUploadedFile("delicious.txt",
-                                         "Golden Delicious apple")
+                                         bytes("Golden Delicious apple"))
 
         post_args = {"name": "file", "file": simple_file}
         with self.login(self.user):
@@ -177,7 +177,7 @@ class TestDocuments(TestViews):
         """
         parent_folder = Folder.objects.create(name="Parent", author=self.user)
         simple_file = SimpleUploadedFile("delicious.txt",
-                                         "Golden Delicious apple")
+                                         bytes("Golden Delicious apple"))
 
         post_args = {"name": "file", "file": simple_file, "folder": parent_folder.pk}
         with self.login(self.user):
@@ -192,7 +192,7 @@ class TestDocuments(TestViews):
         Ensure POST does not create a document with invalid folder.
         """
         simple_file = SimpleUploadedFile("delicious.txt",
-                                         "Golden Delicious apple")
+                                         bytes("Golden Delicious apple"))
 
         post_args = {"name": "file", "file": simple_file, "folder": 555}
         with self.login(self.user):
@@ -206,7 +206,7 @@ class TestDocuments(TestViews):
         Ensure we can see document detail.
         """
         simple_file = SimpleUploadedFile("delicious.txt",
-                                         "Golden Delicious apple")
+                                         bytes("Golden Delicious apple"))
         document = Document.objects.create(name="Honeycrisp",
                                            author=self.user,
                                            file=simple_file,
@@ -227,7 +227,7 @@ class TestDocuments(TestViews):
         patcher.start()
 
         simple_file = SimpleUploadedFile("delicious.txt",
-                                         "Golden Delicious apple")
+                                         bytes("Golden Delicious apple"))
         document = Document.objects.create(name="Honeycrisp",
                                            author=self.user,
                                            file=simple_file,
