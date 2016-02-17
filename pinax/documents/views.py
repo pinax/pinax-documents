@@ -1,10 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
 from django.db.models import F
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import get_object_or_404
+from django.utils.translation import ugettext as _
 from django.views import static
 from django.views.generic import (
     CreateView,
@@ -12,10 +13,16 @@ from django.views.generic import (
     DetailView,
     TemplateView,
 )
+from django.views.generic.detail import (
+    SingleObjectMixin, SingleObjectTemplateResponseMixin,
+)
+from django.views.generic.edit import (
+    FormMixin,
+    ProcessFormView,
+)
 
 from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
-from account.utils import user_display
 
 from .conf import settings
 from .forms import (
@@ -99,11 +106,77 @@ class FolderDetail(LoginRequiredMixin, DetailView):
         qs = qs.for_user(self.request.user)
         return qs
 
+    def get_form_kwargs(self):
+        kwargs = super(FolderShare, self).get_form_kwargs()
+        kwargs.update({"folders": self.model.objects.for_user(self.request.user)})
+        return kwargs
+
     def get_context_data(self, **kwargs):
         context = super(FolderDetail, self).get_context_data(**kwargs)
         ctx = {
             "members": self.object.members(user=self.request.user),
             "can_share": self.object.can_share(self.request.user),
+        }
+        context.update(ctx)
+        return context
+
+
+class FolderShare(LoginRequiredMixin,
+                  SingleObjectTemplateResponseMixin,
+                  FormMixin,
+                  SingleObjectMixin,
+                  ProcessFormView):
+    model = Folder
+    context_object_name = "folder"
+    form_class = ColleagueFolderShareForm
+    template_name = "pinax/documents/folder_share.html"
+    user_class = get_user_model()
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super(FolderShare, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super(FolderShare, self).post(request, *args, **kwargs)
+
+    def get_queryset(self):
+        qs = super(FolderShare, self).get_queryset()
+        qs = qs.for_user(self.request.user)
+        return qs
+
+    def get_object(self):
+        folder = super(FolderShare, self).get_object()
+        if not folder.can_share(self.request.user):
+            raise Http404(_("Cannot share folder '{}'.".format(folder)))
+        return folder
+
+    def get_form_kwargs(self):
+        kwargs = super(FolderShare, self).get_form_kwargs()
+        kwargs.update({'colleagues': self.user_class.objects.all()})
+        return kwargs
+
+    def form_valid(self, form):
+##        if "remove" in self.request.POST:
+##            try:
+##                user_to_remove = self.user_class.objects.get(pk=self.request.POST["remove"])
+##            except self.user_class.DoesNotExist:
+##                pass
+##            # remove the user!
+##
+##            messages.success(self.request, "{} has been removed from folder share".format(user_display(user_to_remove)))
+##            return redirect("pinax_documents_folder_share", self.object.pk)
+##        else:
+        self.object.share(form.cleaned_data["participants"])
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse("pinax_documents_folder_detail", args=[self.object.pk])
+
+    def get_context_data(self, **kwargs):
+        context = super(FolderShare, self).get_context_data(**kwargs)
+        ctx = {
+            "participants": self.object.shared_with(),
         }
         context.update(ctx)
         return context
@@ -191,41 +264,11 @@ def document_download(request, pk, *args):
     return response
 
 
-@login_required
-def folder_share(request, pk):
-    User = get_user_model()
-    qs = Folder.objects.for_user(request.user)
-    folder = get_object_or_404(qs, pk=pk)
-    if not folder.can_share(request.user):
-        raise Http404()
-    form_kwargs = {
-        "colleagues": User.objects.all()  # @@@ make this a hookset to be defined at site level
-    }
-    if request.method == "POST":
-        if "remove" in request.POST:
-            user_to_remove = User.objects.get(pk=request.POST["remove"])
-            messages.success(request, "{} has been removed from folder share".format(user_display(user_to_remove)))
-            return redirect("pinax_documents_folder_share", folder.pk)
-        else:
-            form = ColleagueFolderShareForm(request.POST, **form_kwargs)
-            if form.is_valid():
-                folder.share(form.cleaned_data["participants"])
-                return redirect(folder)
-    else:
-        form = ColleagueFolderShareForm(**form_kwargs)
-    ctx = {
-        "folder": folder,
-        "form": form,
-        "participants": folder.shared_with(),
-    }
-    return render(request, "pinax/documents/folder_share.html", ctx)
-
-
 class DocumentDelete(LoginRequiredMixin, DeleteView):
     model = Document
     success_url = reverse_lazy("pinax_documents_index")
 
     def delete(self, request, *args, **kwargs):
         success_url = super(DocumentDelete, self).delete(request, *args, **kwargs)
-        messages.success(self.request, "Document has been deleted")
+        messages.success(self.request, _("Document has been deleted"))
         return success_url

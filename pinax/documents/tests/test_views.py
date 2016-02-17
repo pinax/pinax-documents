@@ -24,6 +24,7 @@ class TestFolders(TestViews):
         super(TestFolders, self).setUp()
         self.create_urlname = "pinax_documents_folder_create"
         self.detail_urlname = "pinax_documents_folder_detail"
+        self.share_urlname = "pinax_documents_folder_share"
 
     def test_get_create_without_parent(self):
         """
@@ -117,6 +118,52 @@ class TestFolders(TestViews):
         Ensure we can delete a folder?
         """
         pass
+
+    def test_get_share(self):
+        """
+        Ensure sharing users are present in GET context.
+        """
+        sharing_user = self.make_user("sharing")
+        folder = Folder.objects.create(name="Not Mine", author=self.user)
+        folder.save()
+        folder.share([sharing_user])
+
+        nonsharing_user = self.make_user("nonsharing")
+        with self.login(self.user):
+            response = self.get(self.share_urlname, pk=folder.pk)
+            self.assertInContext("participants")
+            self.assertSequenceEqual(self.last_response.context["participants"], [sharing_user])
+
+    def test_share_valid(self):
+        """
+        Ensure we can share a Folder with a valid user.
+        """
+        other_user = self.make_user("other")
+        folder = Folder.objects.create(name="Mine", author=self.user)
+        folder.save()
+
+        post_args = {"participants": [other_user.pk]}
+        with self.login(self.user):
+            response = self.post(self.share_urlname, pk=folder.pk, data=post_args, follow=True)
+            self.response_200(response)
+            self.assertTrue(folder.shared)
+            self.assertTrue(folder.shared_with(other_user))
+
+    def test_share_non_author(self):
+        """
+        Ensure we cannot share a Folder we didn't author.
+        """
+        other_user = self.make_user("other")
+        folder = Folder.objects.create(name="Not Mine", author=other_user)
+        folder.save()
+        folder.share([self.user])
+
+        # `folder` is now associated with self.user, but he did not
+        #  author `folder` and should not be able to share it.
+        post_args = {"participants": [other_user]}
+        with self.login(self.user):
+            response = self.post(self.share_urlname, pk=folder.pk, data=post_args, follow=True)
+            self.response_404(response)
 
 
 class TestDocuments(TestViews):
