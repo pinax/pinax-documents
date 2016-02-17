@@ -131,7 +131,7 @@ class TestFolders(TestViews):
         self.make_user("nonsharing")
 
         with self.login(self.user):
-            response = self.get(self.share_urlname, pk=folder.pk)
+            self.get(self.share_urlname, pk=folder.pk)
             self.assertInContext("participants")
             self.assertSequenceEqual(self.last_response.context["participants"], [sharing_user])
 
