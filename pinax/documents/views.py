@@ -21,7 +21,6 @@ from django.views.generic.edit import (
     ProcessFormView,
 )
 
-from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 
 from .conf import settings
@@ -239,19 +238,33 @@ class DocumentDetail(LoginRequiredMixin, DetailView):
         return qs
 
 
-@login_required
-def document_download(request, pk, *args):
-    qs = Document.objects.for_user(request.user)
-    document = get_object_or_404(qs, pk=pk)
-    if settings.DOCUMENTS_USE_X_ACCEL_REDIRECT:
-        response = HttpResponse()
-        response["X-Accel-Redirect"] = document.file.url
-        # delete content-type to allow Gondor to determine the filetype and
-        # we definitely don't want Django's crappy default :-)
-        del response["content-type"]
-    else:
-        response = static.serve(request, document.file.name, document_root=settings.MEDIA_ROOT)
-    return response
+class DocumentDownload(LoginRequiredMixin, DetailView):
+    model = Document
+
+    def get_queryset(self):
+        qs = super(DocumentDownload, self).get_queryset()
+        qs = qs.for_user(self.request.user)
+        return qs
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if settings.DOCUMENTS_USE_X_ACCEL_REDIRECT:
+            response = HttpResponse()
+            response["X-Accel-Redirect"] = self.object.file.url
+            # delete content-type to allow Gondor to determine the filetype and
+            # we definitely don't want Django's crappy default :-)
+            del response["content-type"]
+        else:
+            # Note:
+            #
+            # The 'django.views.static.py' docstring states:
+            #
+            #     Views and functions for serving static files. These are only to be used
+            #     during development, and SHOULD NOT be used in a production setting.
+            #
+            response = static.serve(request, self.object.file.name,
+                                    document_root=settings.MEDIA_ROOT)
+        return response
 
 
 class DocumentDelete(LoginRequiredMixin, DeleteView):

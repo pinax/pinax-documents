@@ -1,6 +1,7 @@
 import mock
 
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.http import HttpResponse
 
 from ..models import (
     Document,
@@ -173,6 +174,8 @@ class TestDocuments(TestViews):
         super(TestDocuments, self).setUp()
         self.create_urlname = "pinax_documents_document_create"
         self.detail_urlname = "pinax_documents_document_detail"
+        self.download_urlname = "pinax_documents_document_download"
+
         self.file_contents = b"Golden Delicious apple"
 
     def test_get_create_without_folder(self):
@@ -293,3 +296,22 @@ class TestDocuments(TestViews):
         with self.login(self.user):
             response = self.post("documents_document_delete", pk=doc_pk, follow=True)
             self.response_404(response)
+
+    def test_download(self):
+        """
+        Ensure the requested Document file is served.
+        """
+        simple_file = SimpleUploadedFile("delicious.txt", self.file_contents)
+        document = Document.objects.create(name="Honeycrisp",
+                                           author=self.user,
+                                           file=simple_file,
+                                           )
+        document.save()
+
+        with self.login(self.user):
+            # Verify `django.views.static.serve` is called to serve up the file.
+            # See related note in .views.DocumentDownload.get().
+            with mock.patch("django.views.static.serve") as serve:
+                serve.return_value = HttpResponse()
+                self.get_check_200(self.download_urlname, pk=document.pk)
+                self.assertTrue(serve.called)
