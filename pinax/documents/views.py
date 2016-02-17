@@ -157,16 +157,6 @@ class FolderShare(LoginRequiredMixin,
         return kwargs
 
     def form_valid(self, form):
-##        if "remove" in self.request.POST:
-##            try:
-##                user_to_remove = self.user_class.objects.get(pk=self.request.POST["remove"])
-##            except self.user_class.DoesNotExist:
-##                pass
-##            # remove the user!
-##
-##            messages.success(self.request, "{} has been removed from folder share".format(user_display(user_to_remove)))
-##            return redirect("pinax_documents_folder_share", self.object.pk)
-##        else:
         self.object.share(form.cleaned_data["participants"])
         return HttpResponseRedirect(self.get_success_url())
 

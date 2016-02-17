@@ -127,8 +127,9 @@ class TestFolders(TestViews):
         folder = Folder.objects.create(name="Not Mine", author=self.user)
         folder.save()
         folder.share([sharing_user])
+        # Add another user who is not sharing `folder`.
+        self.make_user("nonsharing")
 
-        nonsharing_user = self.make_user("nonsharing")
         with self.login(self.user):
             response = self.get(self.share_urlname, pk=folder.pk)
             self.assertInContext("participants")
