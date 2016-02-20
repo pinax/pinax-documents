@@ -12,8 +12,17 @@ DEFAULT_SETTINGS = dict(
         "django.contrib.auth",
         "django.contrib.contenttypes",
         "django.contrib.sites",
+        "django.contrib.sessions",
         "pinax.documents",
-        "pinax.documents.tests"
+        "pinax.documents.tests",
+        "pinax_theme_bootstrap",
+        "bootstrapform",
+        "account",
+    ],
+    MIDDLEWARE_CLASSES = [
+        "django.contrib.sessions.middleware.SessionMiddleware",
+        "django.contrib.auth.middleware.AuthenticationMiddleware",
+        "django.contrib.auth.middleware.SessionAuthenticationMiddleware",
     ],
     DATABASES={
         "default": {
@@ -24,6 +33,7 @@ DEFAULT_SETTINGS = dict(
     SITE_ID=1,
     ROOT_URLCONF="pinax.documents.tests.urls",
     SECRET_KEY="notasecret",
+    DEFAULT_FILE_STORAGE = 'inmemorystorage.InMemoryStorage',
 )
 
 

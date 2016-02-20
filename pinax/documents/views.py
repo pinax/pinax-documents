@@ -1,23 +1,39 @@
-from django.core.urlresolvers import reverse
-from django.db import transaction
-from django.db.models import F
-from django.http import HttpResponse, Http404
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views import static
-from django.views.generic.base import TemplateView
-
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.core.urlresolvers import reverse, reverse_lazy
+from django.db import transaction
+from django.db.models import F
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.shortcuts import get_object_or_404
+from django.utils.translation import ugettext as _
+from django.views import static
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    TemplateView,
+)
+from django.views.generic.detail import (
+    SingleObjectMixin, SingleObjectTemplateResponseMixin,
+)
+from django.views.generic.edit import (
+    FormMixin,
+    ProcessFormView,
+)
 
-from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
-from account.utils import default_redirect, user_display
 
 from .conf import settings
 from .forms import (
-    FolderCreateForm, DocumentCreateForm, ColleagueFolderShareForm
+    ColleagueFolderShareForm,
+    DocumentCreateForm,
+    FolderCreateForm,
 )
-from .models import Folder, Document, UserStorage
+from .models import (
+    Document,
+    Folder,
+    UserStorage,
+)
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
@@ -34,154 +50,228 @@ class IndexView(LoginRequiredMixin, TemplateView):
         return ctx
 
 
-@login_required
-def folder_create(request):
-    if "p" in request.GET:
-        qs = Folder.objects.for_user(request.user)
-        parent = get_object_or_404(qs, pk=request.GET["p"])
-    else:
-        parent = None
-    form_kwargs = {"folders": Folder.objects.for_user(request.user)}
-    if request.method == "POST":
-        form = FolderCreateForm(request.POST, **form_kwargs)
-        if form.is_valid():
-            kwargs = {
-                "name": form.cleaned_data["name"],
-                "author": request.user,
-                "parent": form.cleaned_data["parent"],
-            }
-            folder = Folder.objects.create(**kwargs)
-            folder.touch(request.user)
+class FolderCreate(LoginRequiredMixin, CreateView):
+    model = Folder
+    form_class = FolderCreateForm
+    template_name = "pinax/documents/folder_create.html"
+    parent = None
+
+    def get(self, request, *args, **kwargs):
+        if "p" in request.GET:
+            qs = self.model.objects.for_user(request.user)
+            self.parent = get_object_or_404(qs, pk=request.GET["p"])
+        else:
+            self.parent = None
+        return super(FolderCreate, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        kwargs.setdefault('parent', self.parent)
+        return super(FolderCreate, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        if self.parent:
+            self.initial["parent"] = self.parent
+        return super(FolderCreate, self).get_initial()
+
+    def get_form_kwargs(self):
+        kwargs = super(FolderCreate, self).get_form_kwargs()
+        kwargs.update({"folders": self.model.objects.for_user(self.request.user)})
+        return kwargs
+
+    def create_folder(self, **kwargs):
+        folder = self.model.objects.create(**kwargs)
+        folder.touch(self.request.user)
+        # if folder is not amongst anything shared it will share with no
+        # users which share will no-op; perhaps not the best way?
+        folder.share(folder.shared_parent().shared_with())
+        return folder
+
+    def form_valid(self, form):
+        kwargs = {
+            "name": form.cleaned_data["name"],
+            "author": self.request.user,
+            "parent": form.cleaned_data["parent"],
+        }
+        self.object = self.create_folder(**kwargs)
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class FolderDetail(LoginRequiredMixin, DetailView):
+    model = Folder
+    template_name = "pinax/documents/folder_detail.html"
+
+    def get_queryset(self):
+        qs = super(FolderDetail, self).get_queryset()
+        qs = qs.for_user(self.request.user)
+        return qs
+
+    def get_form_kwargs(self):
+        kwargs = super(FolderShare, self).get_form_kwargs()
+        kwargs.update({"folders": self.model.objects.for_user(self.request.user)})
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(FolderDetail, self).get_context_data(**kwargs)
+        ctx = {
+            "members": self.object.members(user=self.request.user),
+            "can_share": self.object.can_share(self.request.user),
+        }
+        context.update(ctx)
+        return context
+
+
+class FolderShare(LoginRequiredMixin,
+                  SingleObjectTemplateResponseMixin,
+                  FormMixin,
+                  SingleObjectMixin,
+                  ProcessFormView):
+    model = Folder
+    context_object_name = "folder"
+    form_class = ColleagueFolderShareForm
+    template_name = "pinax/documents/folder_share.html"
+    user_class = get_user_model()
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super(FolderShare, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super(FolderShare, self).post(request, *args, **kwargs)
+
+    def get_queryset(self):
+        qs = super(FolderShare, self).get_queryset()
+        qs = qs.for_user(self.request.user)
+        return qs
+
+    def get_object(self):
+        folder = super(FolderShare, self).get_object()
+        if not folder.can_share(self.request.user):
+            raise Http404(_("Cannot share folder '{}'.".format(folder)))
+        return folder
+
+    def get_form_kwargs(self):
+        kwargs = super(FolderShare, self).get_form_kwargs()
+        kwargs.update({'colleagues': self.user_class.objects.all()})
+        return kwargs
+
+    def form_valid(self, form):
+        self.object.share(form.cleaned_data["participants"])
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse("pinax_documents_folder_detail", args=[self.object.pk])
+
+    def get_context_data(self, **kwargs):
+        context = super(FolderShare, self).get_context_data(**kwargs)
+        ctx = {
+            "participants": self.object.shared_with(),
+        }
+        context.update(ctx)
+        return context
+
+
+class DocumentCreate(LoginRequiredMixin, CreateView):
+    model = Document
+    form_class = DocumentCreateForm
+    template_name = "pinax/documents/document_create.html"
+    folder = None
+
+    def get(self, request, *args, **kwargs):
+        if "f" in request.GET:
+            qs = Folder.objects.for_user(request.user)
+            self.folder = get_object_or_404(qs, pk=request.GET["f"])
+        else:
+            self.folder = None
+        return super(DocumentCreate, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        kwargs.setdefault('folder', self.folder)
+        return super(DocumentCreate, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        if self.folder:
+            self.initial["folder"] = self.folder
+        return super(DocumentCreate, self).get_initial()
+
+    def get_form_kwargs(self):
+        kwargs = super(DocumentCreate, self).get_form_kwargs()
+        kwargs.update({"folders": Folder.objects.for_user(self.request.user),
+                       "storage": self.request.user.storage})
+        return kwargs
+
+    def create_document(self, **kwargs):
+        document = self.model.objects.create(**kwargs)
+        document.touch(self.request.user)
+        if document.folder is not None:
             # if folder is not amongst anything shared it will share with no
             # users which share will no-op; perhaps not the best way?
-            folder.share(folder.shared_parent().shared_with())
-            return redirect(folder)
-    else:
-        initial = {}
-        if parent:
-            initial["parent"] = parent
-        form_kwargs["initial"] = initial
-        form = FolderCreateForm(**form_kwargs)
-    ctx = {
-        "form": form,
-        "parent": parent,
-    }
-    return render(request, "pinax/documents/folder_create.html", ctx)
+            document.share(document.folder.shared_parent().shared_with())
+        return document
+
+    def increase_usage(self, bytes):
+        # increase usage for this user based on document size
+        storage_qs = UserStorage.objects.filter(pk=self.request.user.storage.pk)
+        storage_qs.update(bytes_used=F("bytes_used") + bytes)
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            kwargs = {
+                "name": form.cleaned_data["file"].name,
+                "folder": form.cleaned_data["folder"],
+                "author": self.request.user,
+                "file": form.cleaned_data["file"],
+            }
+            self.object = self.create_document(**kwargs)
+            bytes = form.cleaned_data["file"].size
+            self.increase_usage(bytes)
+            return HttpResponseRedirect(self.get_success_url())
 
 
-@login_required
-def folder_detail(request, pk):
-    qs = Folder.objects.for_user(request.user)
-    folder = get_object_or_404(qs, pk=pk)
-    ctx = {
-        "folder": folder,
-        "members": folder.members(user=request.user),
-        "can_share": folder.can_share(request.user),
-    }
-    return render(request, "pinax/documents/folder_detail.html", ctx)
+class DocumentDetail(LoginRequiredMixin, DetailView):
+    model = Document
+    template_name = "pinax/documents/document_detail.html"
+
+    def get_queryset(self):
+        qs = super(DocumentDetail, self).get_queryset()
+        qs = qs.for_user(self.request.user)
+        return qs
 
 
-@login_required
-def document_create(request):
-    if "f" in request.GET:
-        qs = Folder.objects.for_user(request.user)
-        folder = get_object_or_404(qs, pk=request.GET["f"])
-    else:
-        folder = None
-    form_kwargs = {
-        "folders": Folder.objects.for_user(request.user),
-        "storage": request.user.storage,
-    }
-    if request.method == "POST":
-        form = DocumentCreateForm(request.POST, request.FILES, **form_kwargs)
-        if form.is_valid():
-            with transaction.atomic():
-                bytes = form.cleaned_data["file"].size
-                kwargs = {
-                    "name": form.cleaned_data["file"].name,
-                    "folder": form.cleaned_data["folder"],
-                    "author": request.user,
-                    "file": form.cleaned_data["file"],
-                }
-                document = Document.objects.create(**kwargs)
-                document.touch(request.user)
-                if document.folder is not None:
-                    # if folder is not amongst anything shared it will share with no
-                    # users which share will no-op; perhaps not the best way?
-                    document.share(document.folder.shared_parent().shared_with())
-                # increase usage for this user based on document size
-                storage_qs = UserStorage.objects.filter(pk=request.user.storage.pk)
-                storage_qs.update(bytes_used=F("bytes_used") + bytes)
-            return redirect(document)
-    else:
-        initial = {}
-        if folder:
-            initial["folder"] = folder
-        form_kwargs["initial"] = initial
-        form = DocumentCreateForm(**form_kwargs)
-    ctx = {
-        "form": form,
-        "folder": folder,
-    }
-    return render(request, "pinax/documents/document_create.html", ctx)
+class DocumentDownload(LoginRequiredMixin, DetailView):
+    model = Document
 
+    def get_queryset(self):
+        qs = super(DocumentDownload, self).get_queryset()
+        qs = qs.for_user(self.request.user)
+        return qs
 
-@login_required
-def document_detail(request, pk):
-    qs = Document.objects.for_user(request.user)
-    document = get_object_or_404(qs, pk=pk)
-    ctx = {
-        "document": document,
-    }
-    return render(request, "pinax/documents/document_detail.html", ctx)
-
-
-@login_required
-def document_download(request, pk, *args):
-    qs = Document.objects.for_user(request.user)
-    document = get_object_or_404(qs, pk=pk)
-    if settings.DOCUMENTS_USE_X_ACCEL_REDIRECT:
-        response = HttpResponse()
-        response["X-Accel-Redirect"] = document.file.url
-        # delete content-type to allow Gondor to determine the filetype and
-        # we definitely don't want Django's crappy default :-)
-        del response["content-type"]
-    else:
-        response = static.serve(request, document.file.name, document_root=settings.MEDIA_ROOT)
-    return response
-
-
-@login_required
-def folder_share(request, pk):
-    User = get_user_model()
-    qs = Folder.objects.for_user(request.user)
-    folder = get_object_or_404(qs, pk=pk)
-    if not folder.can_share(request.user):
-        raise Http404()
-    form_kwargs = {
-        "colleagues": User.objects.all()  # @@@ make this a hookset to be defined at site level
-    }
-    if request.method == "POST":
-        if "remove" in request.POST:
-            user_to_remove = User.objects.get(pk=request.POST["remove"])
-            messages.success(request, "{} has been removed from folder share".format(user_display(user_to_remove)))
-            return redirect("pinax_documents_folder_share", folder.pk)
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if settings.DOCUMENTS_USE_X_ACCEL_REDIRECT:
+            response = HttpResponse()
+            response["X-Accel-Redirect"] = self.object.file.url
+            # delete content-type to allow Gondor to determine the filetype and
+            # we definitely don't want Django's crappy default :-)
+            del response["content-type"]
         else:
-            form = ColleagueFolderShareForm(request.POST, **form_kwargs)
-            if form.is_valid():
-                folder.share(form.cleaned_data["participants"])
-                return redirect(folder)
-    else:
-        form = ColleagueFolderShareForm(**form_kwargs)
-    ctx = {
-        "folder": folder,
-        "form": form,
-        "participants": folder.shared_with(),
-    }
-    return render(request, "pinax/documents/folder_share.html", ctx)
+            # Note:
+            #
+            # The 'django.views.static.py' docstring states:
+            #
+            #     Views and functions for serving static files. These are only to be used
+            #     during development, and SHOULD NOT be used in a production setting.
+            #
+            response = static.serve(request, self.object.file.name,
+                                    document_root=settings.MEDIA_ROOT)
+        return response
 
 
-def document_delete(request):
-    redirect_to = default_redirect(request, reverse("pinax_documents_index"))
-    messages.success(request, "Document has been deleted")
-    return redirect(redirect_to)
+class DocumentDelete(LoginRequiredMixin, DeleteView):
+    model = Document
+    success_url = reverse_lazy("pinax_documents_index")
+
+    def delete(self, request, *args, **kwargs):
+        success_url = super(DocumentDelete, self).delete(request, *args, **kwargs)
+        messages.success(self.request, _("Document has been deleted"))
+        return success_url

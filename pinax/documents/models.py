@@ -133,12 +133,8 @@ class Folder(models.Model):
 
     def can_share(self, user):
         """
-        Determines the shared parent and checks if given user is the author
-        of the folder.
+        Ensures folder is top-level and `user` is the author.
         """
-        # sp = self.shared_parent()
-        # return sp.author_id == user.id and self == sp
-        # only share folders that live at the top-level
         return self.parent_id is None and self.author_id == user.id
 
     def share(self, users):
@@ -165,7 +161,7 @@ class Folder(models.Model):
 class Document(models.Model):
 
     name = models.CharField(max_length=255)
-    folder = models.ForeignKey(Folder, null=True)
+    folder = models.ForeignKey(Folder, null=True, blank=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+")
     created = models.DateTimeField(default=timezone.now)
     modified = models.DateTimeField(default=timezone.now)
@@ -263,7 +259,7 @@ class Document(models.Model):
 class MemberSharedUser(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    # @@@ priviledges
+    # @@@ privileges
 
     class Meta:
         abstract = True
