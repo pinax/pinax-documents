@@ -19,7 +19,7 @@ DEFAULT_SETTINGS = dict(
         "bootstrapform",
         "account",
     ],
-    MIDDLEWARE_CLASSES = [
+    MIDDLEWARE_CLASSES=[
         "django.contrib.sessions.middleware.SessionMiddleware",
         "django.contrib.auth.middleware.AuthenticationMiddleware",
         "django.contrib.auth.middleware.SessionAuthenticationMiddleware",
