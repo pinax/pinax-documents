@@ -64,7 +64,7 @@ class FolderCreate(LoginRequiredMixin, CreateView):
         return super(FolderCreate, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        kwargs.setdefault('parent', self.parent)
+        kwargs.setdefault("parent", self.parent)
         return super(FolderCreate, self).get_context_data(**kwargs)
 
     def get_initial(self):
@@ -152,7 +152,7 @@ class FolderShare(LoginRequiredMixin,
     def get_form_kwargs(self):
         kwargs = super(FolderShare, self).get_form_kwargs()
         can_share_with = hookset.share_with_options(self.request.user, self.object)
-        kwargs.update({'colleagues': can_share_with})
+        kwargs.update({"colleagues": can_share_with})
         return kwargs
 
     def form_valid(self, form):
@@ -187,7 +187,7 @@ class DocumentCreate(LoginRequiredMixin, CreateView):
         return super(DocumentCreate, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        kwargs.setdefault('folder', self.folder)
+        kwargs.setdefault("folder", self.folder)
         return super(DocumentCreate, self).get_context_data(**kwargs)
 
     def get_initial(self):
