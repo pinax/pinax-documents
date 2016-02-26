@@ -57,7 +57,8 @@ class TestFolders(TestViews):
             response = self.get(self.create_urlname, data=querystring_data)
             self.response_404(response)
 
-    def test_post_create_without_parent(self):
+    @mock.patch("django.contrib.messages.success")
+    def test_post_create_without_parent(self, mock_messages):
         """
         Ensure POST creates folder without a parent.
         """
@@ -69,8 +70,10 @@ class TestFolders(TestViews):
             created = self.get_context("object")
             self.assertFalse(created.parent)
             self.assertTrue(Folder.objects.get(name=folder_name))
+            self.assertTrue(mock_messages.called)
 
-    def test_post_create_with_parent(self):
+    @mock.patch("django.contrib.messages.success")
+    def test_post_create_with_parent(self, mock_messages):
         """
         Ensure POST creates folder with a parent.
         """
@@ -84,6 +87,7 @@ class TestFolders(TestViews):
             created = self.get_context("object")
             self.assertEqual(created.parent, parent_folder)
             self.assertTrue(Folder.objects.get(name=folder_name))
+            self.assertTrue(mock_messages.called)
 
     def test_post_create_with_illegal_parent(self):
         """
@@ -136,7 +140,8 @@ class TestFolders(TestViews):
             self.assertInContext("participants")
             self.assertSequenceEqual(self.last_response.context["participants"], [sharing_user])
 
-    def test_share_valid(self):
+    @mock.patch("django.contrib.messages.success")
+    def test_share_valid(self, mock_messages):
         """
         Ensure we can share a Folder with a valid user.
         """
@@ -150,6 +155,7 @@ class TestFolders(TestViews):
             self.response_200(response)
             self.assertTrue(folder.shared)
             self.assertTrue(folder.shared_with(other_user))
+            self.assertTrue(mock_messages.called)
 
     def test_share_non_author(self):
         """
@@ -208,7 +214,8 @@ class TestDocuments(TestViews):
             response = self.get(self.create_urlname, data=querystring_data)
             self.response_404(response)
 
-    def test_post_create_without_folder(self):
+    @mock.patch("django.contrib.messages.success")
+    def test_post_create_without_folder(self, mock_messages):
         """
         Ensure POST creates document without a folder.
         """
@@ -221,8 +228,10 @@ class TestDocuments(TestViews):
             created = self.get_context("object")
             self.assertFalse(created.folder)
             self.assertTrue(Document.objects.get(name=simple_file.name))
+            self.assertTrue(mock_messages.called)
 
-    def test_post_create_with_parent(self):
+    @mock.patch("django.contrib.messages.success")
+    def test_post_create_with_parent(self, mock_messages):
         """
         Ensure POST creates document associated with a folder.
         """
@@ -236,6 +245,7 @@ class TestDocuments(TestViews):
             created = self.get_context("object")
             self.assertEqual(created.folder, parent_folder)
             self.assertTrue(Document.objects.get(name=simple_file.name))
+            self.assertTrue(mock_messages.called)
 
     def test_post_create_with_illegal_parent(self):
         """
@@ -265,15 +275,11 @@ class TestDocuments(TestViews):
             context_document = self.get_context("object")
             self.assertEqual(context_document, document)
 
-    def test_valid_delete(self):
+    @mock.patch("django.contrib.messages.success")
+    def test_valid_delete(self, mock_messages):
         """
         Ensure we can delete a valid Document.
         """
-        # Mock "messages" app.
-        patcher = mock.patch('django.contrib.messages.success')
-        self.addCleanup(patcher.stop)
-        patcher.start()
-
         simple_file = SimpleUploadedFile("delicious.txt", self.file_contents)
         document = Document.objects.create(name="Honeycrisp",
                                            author=self.user,
@@ -285,6 +291,7 @@ class TestDocuments(TestViews):
             response = self.post("pinax_documents_document_delete", pk=doc_pk, follow=True)
             self.response_200(response)
             self.assertFalse(Document.objects.filter(pk=doc_pk))
+            self.assertTrue(mock_messages.called)
 
             # TODO: Ensure the actual file is removed from storage.
 

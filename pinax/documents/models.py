@@ -11,6 +11,7 @@ from django.contrib.auth import get_user_model
 
 from .compat import izip_longest
 from .conf import settings
+from .hooks import hookset
 from .managers import FolderManager, FolderQuerySet, DocumentQuerySet
 
 
@@ -135,7 +136,7 @@ class Folder(models.Model):
         """
         Ensures folder is top-level and `user` is the author.
         """
-        return self.parent_id is None and self.author_id == user.id
+        return hookset.can_share_folder(user, self)
 
     def share(self, users):
         """
@@ -253,7 +254,10 @@ class Document(models.Model):
             model._default_manager.bulk_create(objs)
 
     def download_url(self):
-        return reverse("pinax_documents_document_download", args=[self.pk, os.path.basename(self.file.name).lower()])
+        return reverse(
+            "pinax_documents_document_download",
+            args=[self.pk, os.path.basename(self.file.name).lower()]
+        )
 
 
 class MemberSharedUser(models.Model):
@@ -300,11 +304,4 @@ class UserStorage(models.Model):
 
     @property
     def color(self):
-        p = self.percentage
-        if p >= 0 and p < 60:
-            return "success"
-        if p >= 60 and p < 90:
-            return "warning"
-        if p >= 90 and p <= 100:
-            return "danger"
-        raise ValueError("percentage out of range")
+        return hookset.storage_color(self)
