@@ -1,5 +1,3 @@
-from django.contrib import messages
-from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
 from django.db.models import F
@@ -29,6 +27,7 @@ from .forms import (
     DocumentCreateForm,
     FolderCreateForm,
 )
+from .hooks import hookset
 from .models import (
     Document,
     Folder,
@@ -65,7 +64,7 @@ class FolderCreate(LoginRequiredMixin, CreateView):
         return super(FolderCreate, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        kwargs.setdefault('parent', self.parent)
+        kwargs.setdefault("parent", self.parent)
         return super(FolderCreate, self).get_context_data(**kwargs)
 
     def get_initial(self):
@@ -93,6 +92,7 @@ class FolderCreate(LoginRequiredMixin, CreateView):
             "parent": form.cleaned_data["parent"],
         }
         self.object = self.create_folder(**kwargs)
+        hookset.folder_created_message(self.request, self.object)
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -129,7 +129,6 @@ class FolderShare(LoginRequiredMixin,
     context_object_name = "folder"
     form_class = ColleagueFolderShareForm
     template_name = "pinax/documents/folder_share.html"
-    user_class = get_user_model()
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -152,11 +151,13 @@ class FolderShare(LoginRequiredMixin,
 
     def get_form_kwargs(self):
         kwargs = super(FolderShare, self).get_form_kwargs()
-        kwargs.update({'colleagues': self.user_class.objects.all()})
+        can_share_with = hookset.share_with_options(self.request.user, self.object)
+        kwargs.update({"colleagues": can_share_with})
         return kwargs
 
     def form_valid(self, form):
         self.object.share(form.cleaned_data["participants"])
+        hookset.folder_shared_message(self.request, self.request.user, self.object)
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
@@ -186,7 +187,7 @@ class DocumentCreate(LoginRequiredMixin, CreateView):
         return super(DocumentCreate, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        kwargs.setdefault('folder', self.folder)
+        kwargs.setdefault("folder", self.folder)
         return super(DocumentCreate, self).get_context_data(**kwargs)
 
     def get_initial(self):
@@ -223,6 +224,7 @@ class DocumentCreate(LoginRequiredMixin, CreateView):
                 "file": form.cleaned_data["file"],
             }
             self.object = self.create_document(**kwargs)
+            hookset.document_created_message(self.request, self.object)
             bytes = form.cleaned_data["file"].size
             self.increase_usage(bytes)
             return HttpResponseRedirect(self.get_success_url())
@@ -273,5 +275,5 @@ class DocumentDelete(LoginRequiredMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         success_url = super(DocumentDelete, self).delete(request, *args, **kwargs)
-        messages.success(self.request, _("Document has been deleted"))
+        hookset.document_deleted_message(self.request, self.object)
         return success_url
