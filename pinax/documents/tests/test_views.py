@@ -23,9 +23,9 @@ class TestFolders(TestViews):
 
     def setUp(self):
         super(TestFolders, self).setUp()
-        self.create_urlname = "pinax_documents_folder_create"
-        self.detail_urlname = "pinax_documents_folder_detail"
-        self.share_urlname = "pinax_documents_folder_share"
+        self.create_urlname = "pinax_documents:folder_create"
+        self.detail_urlname = "pinax_documents:folder_detail"
+        self.share_urlname = "pinax_documents:folder_share"
 
     def test_get_create_without_parent(self):
         """
@@ -178,9 +178,9 @@ class TestDocuments(TestViews):
 
     def setUp(self):
         super(TestDocuments, self).setUp()
-        self.create_urlname = "pinax_documents_document_create"
-        self.detail_urlname = "pinax_documents_document_detail"
-        self.download_urlname = "pinax_documents_document_download"
+        self.create_urlname = "pinax_documents:document_create"
+        self.detail_urlname = "pinax_documents:document_detail"
+        self.download_urlname = "pinax_documents:document_download"
 
         self.file_contents = b"Golden Delicious apple"
 
@@ -288,7 +288,7 @@ class TestDocuments(TestViews):
 
         doc_pk = document.pk
         with self.login(self.user):
-            response = self.post("pinax_documents_document_delete", pk=doc_pk, follow=True)
+            response = self.post("pinax_documents:document_delete", pk=doc_pk, follow=True)
             self.response_200(response)
             self.assertFalse(Document.objects.filter(pk=doc_pk))
             self.assertTrue(mock_messages.called)
