@@ -2,7 +2,6 @@ from django.conf.urls import url
 
 from . import views
 
-app_name = "pinax_documents"
 urlpatterns = [
     url(r"^$", views.IndexView.as_view(),
         name="document_index"),
