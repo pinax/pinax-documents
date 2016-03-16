@@ -161,7 +161,7 @@ class FolderShare(LoginRequiredMixin,
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse("pinax_documents_folder_detail", args=[self.object.pk])
+        return reverse("pinax_documents:folder_detail", args=[self.object.pk])
 
     def get_context_data(self, **kwargs):
         context = super(FolderShare, self).get_context_data(**kwargs)
@@ -271,7 +271,7 @@ class DocumentDownload(LoginRequiredMixin, DetailView):
 
 class DocumentDelete(LoginRequiredMixin, DeleteView):
     model = Document
-    success_url = reverse_lazy("pinax_documents_index")
+    success_url = reverse_lazy("pinax_documents:document_index")
 
     def delete(self, request, *args, **kwargs):
         success_url = super(DocumentDelete, self).delete(request, *args, **kwargs)
