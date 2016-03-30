@@ -256,7 +256,7 @@ class Document(models.Model):
     def download_url(self):
         return reverse(
             "pinax_documents:document_download",
-            args=[self.pk, os.path.basename(self.file.name).lower()]
+            args=[self.pk]
         )
 
 
