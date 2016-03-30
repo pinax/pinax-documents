@@ -293,7 +293,9 @@ class TestDocuments(TestViews):
             self.assertFalse(Document.objects.filter(pk=doc_pk))
             self.assertTrue(mock_messages.called)
 
-            # TODO: Ensure the actual file is removed from storage.
+            with mock.patch("django.views.static.serve") as serve:
+                response = self.get(self.download_urlname, pk=document.pk)
+                self.response_404(response)
 
     def test_invalid_delete(self):
         """
