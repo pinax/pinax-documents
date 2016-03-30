@@ -259,6 +259,12 @@ class Document(models.Model):
             args=[self.pk]
         )
 
+    def delete_url(self):
+        return reverse(
+            "pinax_documents:document_delete",
+            args=[self.pk]
+        )
+
 
 class MemberSharedUser(models.Model):
 
