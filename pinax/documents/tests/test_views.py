@@ -288,6 +288,10 @@ class TestDocuments(TestViews):
 
         doc_pk = document.pk
         with self.login(self.user):
+            response = self.get(document.delete_url())
+            self.response_200(response)
+            self.assertTrue('pinax/documents/document_confirm_delete.html' in response.template_name)
+
             response = self.post("pinax_documents:document_delete", pk=doc_pk, follow=True)
             self.response_200(response)
             self.assertFalse(Document.objects.filter(pk=doc_pk))
