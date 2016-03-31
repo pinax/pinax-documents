@@ -272,9 +272,7 @@ class DocumentDownload(LoginRequiredMixin, DetailView):
 class DocumentDelete(LoginRequiredMixin, DeleteView):
     model = Document
     success_url = reverse_lazy("pinax_documents:document_index")
-
-    def get_template_names(self):
-        return ['/'.join(['pinax', path]) for path in super(DocumentDelete, self).get_template_names()]
+    template_name = 'pinax/documents/document_confirm_delete.html'
 
     def delete(self, request, *args, **kwargs):
         success_url = super(DocumentDelete, self).delete(request, *args, **kwargs)
