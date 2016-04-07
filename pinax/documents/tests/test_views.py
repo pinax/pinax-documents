@@ -26,6 +26,7 @@ class TestFolders(TestViews):
         self.create_urlname = "pinax_documents:folder_create"
         self.detail_urlname = "pinax_documents:folder_detail"
         self.share_urlname = "pinax_documents:folder_share"
+        self.delete_urlname = "pinax_documents:folder_delete"
 
     def test_get_create_without_parent(self):
         """
@@ -118,11 +119,60 @@ class TestFolders(TestViews):
         """
         pass
 
-    def test_delete(self):
+    @mock.patch("django.contrib.messages.success")
+    def test_delete(self, mock_messages):
         """
-        Ensure we can delete a folder?
+        Ensure we can delete a folder.
         """
-        pass
+        parent_folder = Folder.objects.create(name="Parent", author=self.user)
+
+        with self.login(self.user):
+            response = self.get(self.delete_urlname, pk=parent_folder.pk)
+            self.response_200(response)
+            self.assertTrue('pinax/documents/folder_confirm_delete.html' in response.template_name)
+
+            response = self.post(self.delete_urlname, pk=parent_folder.pk, follow=True)
+            self.response_200(response)
+            self.assertFalse(Folder.objects.filter(pk=parent_folder.pk))
+            self.assertTrue(mock_messages.called)
+
+            response = self.get(self.detail_urlname, pk=parent_folder.pk)
+            self.response_404(response)
+
+    @mock.patch("django.contrib.messages.success")
+    def test_delete_recursive(self, mock_messages):
+        """
+        Ensure that when we delete a folder with contents, those contents are also deleted.
+        """
+        parent_folder = Folder.objects.create(name="Parent", author=self.user)
+        child_folder = Folder.objects.create(name="Child", author=self.user, parent=parent_folder)
+        Folder.objects.create(name="Grand Child", author=self.user, parent=child_folder)
+
+        child_file = SimpleUploadedFile("child.txt", b"Child document")
+        child_document = Document.objects.create(name="Child Doc",
+                                                 author=self.user,
+                                                 file=child_file,
+                                                 folder=parent_folder,
+                                                 )
+        grand_child_file = SimpleUploadedFile("grand_child.txt", b"Grand Child document")
+        grand_child_document = Document.objects.create(name="Grand Child Doc",
+                                                       author=self.user,
+                                                       file=grand_child_file,
+                                                       folder=child_folder,
+                                                       )
+
+        with self.login(self.user):
+            response = self.post(self.delete_urlname, pk=parent_folder.pk, follow=True)
+            self.response_200(response)
+            self.assertFalse(Folder.objects.all())
+            self.assertFalse(Document.objects.all())
+
+            self.assertTrue(mock_messages.called)
+
+            response = self.get("pinax_documents:document_detail", pk=child_document.pk)
+            self.response_404(response)
+            response = self.get("pinax_documents:document_detail", pk=grand_child_document.pk)
+            self.response_404(response)
 
     def test_get_share(self):
         """
