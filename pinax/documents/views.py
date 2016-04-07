@@ -172,6 +172,18 @@ class FolderShare(LoginRequiredMixin,
         return context
 
 
+class FolderDelete(LoginRequiredMixin, DeleteView):
+    model = Folder
+    success_url = reverse_lazy("pinax_documents:document_index")
+    template_name = 'pinax/documents/folder_confirm_delete.html'
+
+    def delete(self, request, *args, **kwargs):
+        hookset.folder_pre_delete(self.request, self.get_object())
+        success_url = super(FolderDelete, self).delete(request, *args, **kwargs)
+        hookset.folder_deleted_message(self.request, self.object)
+        return success_url
+
+
 class DocumentCreate(LoginRequiredMixin, CreateView):
     model = Document
     form_class = DocumentCreateForm

@@ -19,4 +19,6 @@ urlpatterns = [
         name="folder_detail"),
     url(r"^f/(?P<pk>\d+)/share/$", views.FolderShare.as_view(),
         name="folder_share"),
+    url(r"^f/(?P<pk>\d+)/delete/$", views.FolderDelete.as_view(),
+        name="folder_delete"),
 ]

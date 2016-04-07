@@ -158,6 +158,12 @@ class Folder(models.Model):
             FM._default_manager.bulk_create(fm)
             DM._default_manager.bulk_create(dm)
 
+    def delete_url(self):
+        return reverse(
+            "pinax_documents:folder_delete",
+            args=[self.pk]
+        )
+
 
 class Document(models.Model):
 

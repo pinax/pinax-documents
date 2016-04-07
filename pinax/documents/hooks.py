@@ -63,6 +63,21 @@ class DocumentsDefaultHookSet(object):
         """
         messages.success(request, _("Document has been deleted"))
 
+    def folder_deleted_message(self, request, folder):
+        """
+        Send messages.success message after successful document deletion.
+        """
+        messages.success(request, _("Folder has been deleted"))
+
+    def folder_pre_delete(self, request, folder):
+        """
+        Perform folder operations prior to deletions. For example, deleting all contents.
+        """
+        for m in folder.members():
+            if m.__class__ == folder.__class__:
+                self.folder_pre_delete(request, m)
+            m.delete()
+
 
 class HookProxy(object):
 
