@@ -7,19 +7,10 @@ from ..models import (
     Document,
     Folder,
 )
-from .test import TestCase
+from .test import BaseTest
 
 
-class TestViews(TestCase):
-
-    def setUp(self):
-        """
-        Create default User.
-        """
-        self.user = self.make_user("eldarion")
-
-
-class TestFolders(TestViews):
+class TestFolders(BaseTest):
 
     def setUp(self):
         super(TestFolders, self).setUp()
@@ -101,6 +92,19 @@ class TestFolders(TestViews):
             self.response_200(response)
             self.assertFalse("object" in self.last_response.context)
             self.assertFalse(Folder.objects.filter(name=folder_name))
+
+    def test_post_create_with_duplicate_name(self):
+        """
+        Ensure POST does not create a folder with duplicate name
+        """
+        folder_name = "Spindle"
+        Folder.objects.create(name=folder_name, author=self.user, modified_by=self.user)
+        post_args = {"name": folder_name}
+        with self.login(self.user):
+            response = self.post(self.create_urlname, data=post_args, follow=True)
+            self.response_200(response)
+            self.assertTrue("{} already exists.".format(folder_name) in str(response.context["form"].errors))
+            self.assertFalse("object" in self.last_response.context)
 
     def test_detail(self):
         """
@@ -224,7 +228,7 @@ class TestFolders(TestViews):
             self.response_404(response)
 
 
-class TestDocuments(TestViews):
+class TestDocuments(BaseTest):
 
     def setUp(self):
         super(TestDocuments, self).setUp()
@@ -309,6 +313,20 @@ class TestDocuments(TestViews):
             self.response_200(response)
             self.assertFalse("object" in self.last_response.context)
             self.assertFalse(Document.objects.filter(name=simple_file.name))
+
+    def test_post_create_with_duplicate_name(self):
+        """
+        Ensure POST does not create a document with duplicate name
+        """
+        simple_file = SimpleUploadedFile("delicious.txt", self.file_contents)
+        Document.objects.create(name="delicious.txt", author=self.user, file=simple_file, modified_by=self.user)
+        simple_file = SimpleUploadedFile("delicious.txt", self.file_contents)
+        post_args = {"name": "file", "file": simple_file}
+        with self.login(self.user):
+            response = self.post(self.create_urlname, data=post_args, follow=True)
+            self.response_200(response)
+            self.assertTrue("delicious.txt already exists." in str(response.context["form"].errors))
+            self.assertFalse("object" in self.last_response.context)
 
     def test_detail(self):
         """

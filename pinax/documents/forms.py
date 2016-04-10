@@ -21,6 +21,12 @@ class FolderCreateForm(forms.ModelForm):
             "parent": forms.HiddenInput,
         }
 
+    def clean(self):
+        name = self.cleaned_data["name"]
+        parent = self.cleaned_data.get("parent")
+        if Folder.already_exists(name, parent):
+            raise forms.ValidationError("{} already exists.".format(name))
+
     def __init__(self, *args, **kwargs):
         folders = kwargs.pop("folders")
         super(FolderCreateForm, self).__init__(*args, **kwargs)
@@ -47,6 +53,12 @@ class DocumentCreateForm(forms.ModelForm):
         if (value.size + self.storage.bytes_used) > self.storage.bytes_total:
             raise forms.ValidationError("File will exceed storage capacity.")
         return value
+
+    def clean(self):
+        name = self.cleaned_data["file"].name
+        folder = self.cleaned_data.get("folder")
+        if Document.already_exists(name, folder):
+            raise forms.ValidationError("{} already exists.".format(name))
 
 
 class UserMultipleChoiceField(forms.ModelMultipleChoiceField):
