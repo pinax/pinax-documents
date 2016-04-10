@@ -41,11 +41,15 @@ class Folder(models.Model):
     def shared_user_model(cls):
         return FolderSharedUser
 
+    @classmethod
+    def already_exists(cls, name, parent=None):
+        return cls.objects.filter(name=name, parent=parent).exists()
+
     def __unicode__(self):
         return self.name
 
     def save(self, **kwargs):
-        if Folder.objects.filter(name=self.name, parent=self.parent).exclude(pk=self.pk).exists():
+        if not self.pk and Folder.already_exists(self.name, self.parent):
             raise DuplicateFolderNameError("{} already exists in this folder.".format(self.name))
         self.touch(self.author, commit=False)
         super(Folder, self).save(**kwargs)
@@ -188,11 +192,15 @@ class Document(models.Model):
     def shared_user_model(cls):
         return DocumentSharedUser
 
+    @classmethod
+    def already_exists(cls, name, folder=None):
+        return cls.objects.filter(name=name, folder=folder).exists()
+
     def __unicode__(self):
         return self.name
 
     def save(self, **kwargs):
-        if Document.objects.filter(name=self.name, folder=self.folder).exclude(pk=self.pk).exists():
+        if not self.pk and Document.already_exists(self.name, self.folder):
             raise DuplicateDocumentNameError("{} already exists in this folder.".format(self.name))
         self.touch(self.author, commit=False)
         super(Document, self).save(**kwargs)
