@@ -7,19 +7,10 @@ from ..models import (
     Document,
     Folder,
 )
-from .test import TestCase
+from .test import BaseTest
 
 
-class TestViews(TestCase):
-
-    def setUp(self):
-        """
-        Create default User.
-        """
-        self.user = self.make_user("eldarion")
-
-
-class TestFolders(TestViews):
+class TestFolders(BaseTest):
 
     def setUp(self):
         super(TestFolders, self).setUp()
@@ -224,7 +215,7 @@ class TestFolders(TestViews):
             self.response_404(response)
 
 
-class TestDocuments(TestViews):
+class TestDocuments(BaseTest):
 
     def setUp(self):
         super(TestDocuments, self).setUp()

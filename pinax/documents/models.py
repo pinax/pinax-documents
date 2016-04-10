@@ -11,6 +11,7 @@ from django.contrib.auth import get_user_model
 
 from .compat import izip_longest
 from .conf import settings
+from .exceptions import DuplicateFolderNameError, DuplicateDocumentNameError
 from .hooks import hookset
 from .managers import FolderManager, FolderQuerySet, DocumentQuerySet
 
@@ -44,6 +45,8 @@ class Folder(models.Model):
         return self.name
 
     def save(self, **kwargs):
+        if Folder.objects.filter(name=self.name, parent=self.parent).exclude(pk=self.pk).exists():
+            raise DuplicateFolderNameError("{} already exists in this folder.".format(self.name))
         self.touch(self.author, commit=False)
         super(Folder, self).save(**kwargs)
 
@@ -189,6 +192,8 @@ class Document(models.Model):
         return self.name
 
     def save(self, **kwargs):
+        if Document.objects.filter(name=self.name, folder=self.folder).exclude(pk=self.pk).exists():
+            raise DuplicateDocumentNameError("{} already exists in this folder.".format(self.name))
         self.touch(self.author, commit=False)
         super(Document, self).save(**kwargs)
 
