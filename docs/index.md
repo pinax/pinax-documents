@@ -1,27 +1,14 @@
-# pinax-{{ app_name }}
+# pinax-documents
 
+`pinax-documents` is a well tested, documented, and proven solution for any site that
+that wants to support document management.
 
-!!! note "Pinax Ecosystem"
-    This app was developed as part of the Pinax ecosystem but is just a Django app
-    and can be used independently of other Pinax apps.
-    
-    To learn more about Pinax, see <http://pinaxproject.com/>
+## Contents
 
+* [Installation](./installation.md)
+* [Template tags](./templatetags.md)
+* [Changelog](./changelog.md)
 
-## Quickstart
+## Development
 
-Install the development version:
-
-    pip install pinax-{{ app_name }}
-
-Add `pinax-{{ app_name }}` to your `INSTALLED_APPS` setting:
-
-    INSTALLED_APPS = (
-        # ...
-        "pinax.{{ app_name }}",
-        # ...
-    )
-
-Add entry to your `urls.py`:
-
-    url(r"^{{ app_name }}/", include("pinax.{{ app_name }}.urls"))
+The source repository can be found at [https://github.com/pinax/pinax-documents]( https://github.com/pinax/pinax-documents).
