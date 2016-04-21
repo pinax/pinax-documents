@@ -1,6 +1,8 @@
 site_name: pinax-documents
 pages:
 - [index.md, Home]
+- [installation.md, Installation]
+- [templatetags.md], Template Tags]
 - [changelog.md, Change Log]
 theme: readthedocs
 repo_url: https://github.com/pinax/pinax-documents

@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.4.1
+
+* Updating documentation
+
 ## 0.4.0
 
 ### Contributors
