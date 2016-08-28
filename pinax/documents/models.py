@@ -6,6 +6,7 @@ import uuid
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 
 from django.contrib.auth import get_user_model
 
@@ -22,6 +23,7 @@ def uuid_filename(instance, filename):
     return os.path.join("document", filename)
 
 
+@python_2_unicode_compatible
 class Folder(models.Model):
 
     name = models.CharField(max_length=140)
@@ -45,7 +47,7 @@ class Folder(models.Model):
     def already_exists(cls, name, parent=None):
         return cls.objects.filter(name=name, parent=parent).exists()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def save(self, **kwargs):
@@ -172,6 +174,7 @@ class Folder(models.Model):
         )
 
 
+@python_2_unicode_compatible
 class Document(models.Model):
 
     name = models.CharField(max_length=255)
@@ -196,7 +199,7 @@ class Document(models.Model):
     def already_exists(cls, name, folder=None):
         return cls.objects.filter(name=name, folder=folder).exists()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def save(self, **kwargs):
