@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.4.2
+
+* Fix bug in document deletion where quota was not given back
+* Made model strings for `Folder` and `Document` Python 3 compatible
+
 ## 0.4.1
 
 * Updating documentation
