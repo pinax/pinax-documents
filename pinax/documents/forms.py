@@ -55,10 +55,11 @@ class DocumentCreateForm(forms.ModelForm):
         return value
 
     def clean(self):
-        name = self.cleaned_data["file"].name
-        folder = self.cleaned_data.get("folder")
-        if Document.already_exists(name, folder):
-            raise forms.ValidationError("{} already exists.".format(name))
+        if "file" in self.cleaned_data:
+            name = self.cleaned_data.get("file").name
+            folder = self.cleaned_data.get("folder")
+            if Document.already_exists(name, folder):
+                raise forms.ValidationError("{} already exists.".format(name))
 
 
 class UserMultipleChoiceField(forms.ModelMultipleChoiceField):
