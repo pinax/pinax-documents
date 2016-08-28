@@ -5,6 +5,7 @@ import uuid
 
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import F
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
@@ -190,6 +191,12 @@ class Document(models.Model):
     kind = "document"
     icon = "file"
     shared = None
+
+    def delete(self, *args, **kwargs):
+        bytes_to_free = self.size
+        super(Document, self).delete(*args, **kwargs)
+        storage_qs = UserStorage.objects.filter(pk=self.author.storage.pk)
+        storage_qs.update(bytes_used=F("bytes_used") - bytes_to_free)
 
     @classmethod
     def shared_user_model(cls):
