@@ -1,6 +1,10 @@
+import os
+import uuid
+
+from django.utils.translation import ugettext as _
+
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.utils.translation import ugettext as _
 
 from .conf import settings
 
@@ -77,6 +81,14 @@ class DocumentsDefaultHookSet(object):
             if m.__class__ == folder.__class__:
                 self.folder_pre_delete(request, m)
             m.delete()
+
+    def file_upload_to(self, instance, filename):
+        """
+        Callable passed to the FileField's upload_to kwarg on Document.file
+        """
+        ext = filename.split(".")[-1]
+        filename = "{}.{}".format(uuid.uuid4(), ext)
+        return os.path.join("document", filename)
 
 
 class HookProxy(object):
