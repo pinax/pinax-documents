@@ -62,6 +62,16 @@ class DocumentCreateForm(forms.ModelForm):
                 raise forms.ValidationError("{} already exists.".format(name))
 
 
+class DocumentCreateFormWithName(DocumentCreateForm):
+
+    class Meta:
+        model = Document
+        fields = ["folder", "file", "name"]
+        widgets = {
+            "folder": forms.HiddenInput,
+        }
+
+
 class UserMultipleChoiceField(forms.ModelMultipleChoiceField):
 
     def label_from_instance(self, obj):
