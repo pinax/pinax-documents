@@ -181,6 +181,7 @@ class Document(models.Model):
     modified = models.DateTimeField(default=timezone.now)
     modified_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+")
     file = models.FileField(upload_to=uuid_filename)
+    original_filename = models.CharField(max_length=500)
 
     objects = DocumentQuerySet.as_manager()
 
