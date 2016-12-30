@@ -231,6 +231,7 @@ class DocumentCreate(LoginRequiredMixin, CreateView):
         with transaction.atomic():
             kwargs = {
                 "name": form.cleaned_data["file"].name,
+                "original_filename": form.cleaned_data["file"].name,
                 "folder": form.cleaned_data["folder"],
                 "author": self.request.user,
                 "file": form.cleaned_data["file"],
