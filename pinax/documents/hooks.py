@@ -90,6 +90,9 @@ class DocumentsDefaultHookSet(object):
         filename = "{}.{}".format(uuid.uuid4(), ext)
         return os.path.join("document", filename)
 
+    def already_exists_validation_message(self, name, folder):
+        return "{} already exists.".format(name)
+
 
 class HookProxy(object):
 
