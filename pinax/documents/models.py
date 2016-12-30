@@ -1,7 +1,5 @@
 import itertools
 import math
-import os
-import uuid
 
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -19,9 +17,7 @@ from .managers import FolderManager, FolderQuerySet, DocumentQuerySet
 
 
 def uuid_filename(instance, filename):
-    ext = filename.split(".")[-1]
-    filename = "%s.%s" % (uuid.uuid4(), ext)
-    return os.path.join("document", filename)
+    return hookset.file_upload_to(instance, filename)
 
 
 @python_2_unicode_compatible
@@ -185,6 +181,7 @@ class Document(models.Model):
     modified = models.DateTimeField(default=timezone.now)
     modified_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+")
     file = models.FileField(upload_to=uuid_filename)
+    original_filename = models.CharField(max_length=500)
 
     objects = DocumentQuerySet.as_manager()
 

@@ -25,7 +25,8 @@ from .conf import settings
 from .forms import (
     ColleagueFolderShareForm,
     DocumentCreateForm,
-    FolderCreateForm,
+    DocumentCreateFormWithName,
+    FolderCreateForm
 )
 from .hooks import hookset
 from .models import (
@@ -227,19 +228,37 @@ class DocumentCreate(LoginRequiredMixin, CreateView):
         storage_qs = UserStorage.objects.filter(pk=self.request.user.storage.pk)
         storage_qs.update(bytes_used=F("bytes_used") + bytes)
 
+    def get_create_kwargs(self, form):
+        return {
+            "name": form.cleaned_data["file"].name,
+            "original_filename": form.cleaned_data["file"].name,
+            "folder": form.cleaned_data["folder"],
+            "author": self.request.user,
+            "file": form.cleaned_data["file"],
+        }
+
     def form_valid(self, form):
         with transaction.atomic():
-            kwargs = {
-                "name": form.cleaned_data["file"].name,
-                "folder": form.cleaned_data["folder"],
-                "author": self.request.user,
-                "file": form.cleaned_data["file"],
-            }
+            kwargs = self.get_create_kwargs(form)
             self.object = self.create_document(**kwargs)
             hookset.document_created_message(self.request, self.object)
             bytes = form.cleaned_data["file"].size
             self.increase_usage(bytes)
             return HttpResponseRedirect(self.get_success_url())
+
+
+class DocumentWithCustomNameCreate(DocumentCreate):
+
+    form_class = DocumentCreateFormWithName
+
+    def get_create_kwargs(self, form):
+        return {
+            "name": form.cleaned_data["name"],
+            "original_filename": form.cleaned_data["file"].name,
+            "folder": form.cleaned_data["folder"],
+            "author": self.request.user,
+            "file": form.cleaned_data["file"],
+        }
 
 
 class DocumentDetail(LoginRequiredMixin, DetailView):

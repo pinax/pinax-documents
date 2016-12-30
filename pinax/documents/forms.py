@@ -6,6 +6,7 @@ except ImportError:
     def user_display(user):
         return user.username
 
+from .hooks import hookset
 from .models import (
     Document,
     Folder,
@@ -59,7 +60,19 @@ class DocumentCreateForm(forms.ModelForm):
             name = self.cleaned_data.get("file").name
             folder = self.cleaned_data.get("folder")
             if Document.already_exists(name, folder):
-                raise forms.ValidationError("{} already exists.".format(name))
+                raise forms.ValidationError(
+                    hookset.already_exists_validation_message(name, folder)
+                )
+
+
+class DocumentCreateFormWithName(DocumentCreateForm):
+
+    class Meta:
+        model = Document
+        fields = ["folder", "file", "name"]
+        widgets = {
+            "folder": forms.HiddenInput,
+        }
 
 
 class UserMultipleChoiceField(forms.ModelMultipleChoiceField):
