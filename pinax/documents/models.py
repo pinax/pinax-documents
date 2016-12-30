@@ -16,6 +16,10 @@ from .hooks import hookset
 from .managers import FolderManager, FolderQuerySet, DocumentQuerySet
 
 
+def uuid_filename(instance, filename):
+    return hookset.file_upload_to(instance, filename)
+
+
 @python_2_unicode_compatible
 class Folder(models.Model):
 
@@ -176,7 +180,7 @@ class Document(models.Model):
     created = models.DateTimeField(default=timezone.now)
     modified = models.DateTimeField(default=timezone.now)
     modified_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+")
-    file = models.FileField(upload_to=hookset.file_upload_to)
+    file = models.FileField(upload_to=uuid_filename)
 
     objects = DocumentQuerySet.as_manager()
 
