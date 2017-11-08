@@ -10,7 +10,6 @@ except ImportError:
         return user.username
 
 
-
 class FolderCreateForm(forms.ModelForm):
 
     class Meta:
