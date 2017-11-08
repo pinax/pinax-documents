@@ -1,10 +1,9 @@
 import os
 import uuid
 
-from django.utils.translation import ugettext as _
-
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.utils.translation import ugettext as _
 
 from .conf import settings
 

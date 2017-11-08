@@ -2,7 +2,6 @@ from django.template import Library
 
 from ..utils import convert_bytes
 
-
 register = Library()
 
 

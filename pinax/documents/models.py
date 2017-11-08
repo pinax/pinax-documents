@@ -1,19 +1,18 @@
 import itertools
 import math
 
+from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import F
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
-from django.contrib.auth import get_user_model
-
 from .compat import izip_longest
 from .conf import settings
-from .exceptions import DuplicateFolderNameError, DuplicateDocumentNameError
+from .exceptions import DuplicateDocumentNameError, DuplicateFolderNameError
 from .hooks import hookset
-from .managers import FolderManager, FolderQuerySet, DocumentQuerySet
+from .managers import DocumentQuerySet, FolderManager, FolderQuerySet
 
 
 def uuid_filename(instance, filename):

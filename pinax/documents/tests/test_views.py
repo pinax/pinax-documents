@@ -1,12 +1,9 @@
-import mock
-
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import HttpResponse
 
-from ..models import (
-    Document,
-    Folder,
-)
+import mock
+
+from ..models import Document, Folder
 from .test import BaseTest
 
 

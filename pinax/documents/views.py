@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
 from django.db.models import F
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views import static
@@ -9,15 +9,13 @@ from django.views.generic import (
     CreateView,
     DeleteView,
     DetailView,
-    TemplateView,
+    TemplateView
 )
 from django.views.generic.detail import (
-    SingleObjectMixin, SingleObjectTemplateResponseMixin,
+    SingleObjectMixin,
+    SingleObjectTemplateResponseMixin
 )
-from django.views.generic.edit import (
-    FormMixin,
-    ProcessFormView,
-)
+from django.views.generic.edit import FormMixin, ProcessFormView
 
 from account.mixins import LoginRequiredMixin
 
@@ -29,11 +27,7 @@ from .forms import (
     FolderCreateForm
 )
 from .hooks import hookset
-from .models import (
-    Document,
-    Folder,
-    UserStorage,
-)
+from .models import Document, Folder, UserStorage
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
