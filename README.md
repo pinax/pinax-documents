@@ -1,11 +1,118 @@
+![](http://pinaxproject.com/pinax-design/patches/pinax-documents.svg)
+    
 # Pinax Documents
 
 [![](http://slack.pinaxproject.com/badge.svg)](http://slack.pinaxproject.com/)
-[![](https://img.shields.io/travis/pinax/pinax-documents.svg)](https://travis-ci.org/pinax/pinax-documents)
-[![](https://img.shields.io/coveralls/pinax/pinax-documents.svg)](https://coveralls.io/r/pinax/pinax-documents)
+
+[![CircleCi](https://img.shields.io/circleci/project/github/pinax/pinax-documents.svg)](https://circleci.com/gh/pinax/pinax-documents)
+[![Codecov](https://img.shields.io/codecov/c/github/pinax/pinax-documents.svg)](https://codecov.io/gh/pinax/pinax-documents)
 [![](https://img.shields.io/pypi/dm/pinax-documents.svg)](https://pypi.python.org/pypi/pinax-documents/)
 [![](https://img.shields.io/pypi/v/pinax-documents.svg)](https://pypi.python.org/pypi/pinax-documents/)
 [![](https://img.shields.io/badge/license-MIT-blue.svg)](https://pypi.python.org/pypi/pinax-documents/)
+
+`pinax-documents` is a well tested, documented, and proven solution for any site that
+that wants to support document management.
+
+## Table of Contents
+
+* [Development](#development)
+* [Installation](#installation)
+* [Filters](#filters)
+* [Template tags](#templatetags)
+* [Changelog](#changelog)
+
+
+## Development
+
+The source repository can be found at [https://github.com/pinax/pinax-documents]( https://github.com/pinax/pinax-documents).
+
+## Installation
+
+To install pinax-documents:
+
+    pip install pinax-documents
+
+Add `pinax.documents` to your `INSTALLED_APPS` setting:
+
+    INSTALLED_APPS = (
+        ...
+        "pinax.documents",
+        ...
+    )
+
+Add `pinax.documents.urls` to your project urlpatterns:
+
+    urlpatterns = [
+        ...
+        url(r"^docs/", include("pinax.documents.urls", namespace="pinax_documents")),
+        ...
+    ]
+    
+
+`{% load pinax_documents_tags %}`
+
+## Filters
+
+### can_share
+
+Returns True if `member` can share with `user`:
+
+    {{ member|can_share:user }}
+
+### readable_bytes
+
+Display number of bytes using appropriate units.
+
+    {{ 73741824|readable_bytes }}
+
+yields "70MB".
+
+
+## Change Log
+
+### 0.6.0
+
+* Moved docs to README.md
+* 
+
+### 0.4.2
+
+* Fix bug in document deletion where quota was not given back
+* Made model strings for `Folder` and `Document` Python 3 compatible
+
+### 0.4.1
+
+* Updating documentation
+
+### 0.4.0
+
+### Contributors
+
+* [Graham Ullrich](https://github.com/grahamu)
+* [Ethan A Kent](https://github.com/ethankent)
+* [Patrick Altman](https://github.com/paltman)
+
+### Changes
+
+* Moved template locations to be under `pinax/` [PR #9](https://github.com/pinax/pinax-documents/pull/9)
+* Namespaced URLs [PR #10](https://github.com/pinax/pinax-documents/pull/10), [PR #16](https://github.com/pinax/pinax-documents/pull/16)
+* Moved signal receiver to receivers.py [PR #11](https://github.com/pinax/pinax-documents/pull/11)
+* Converted views to class based views [PR #12](https://github.com/pinax/pinax-documents/pull/12)
+* Added hooksets [PR #15](https://github.com/pinax/pinax-documents/pull/15)
+* Document deletion [PR #17](https://github.com/pinax/pinax-documents/pull/17)
+* Folder deletion [PR #19](https://github.com/pinax/pinax-documents/pull/19)
+* Disallow document name duplicates within same folder [PR #20](https://github.com/pinax/pinax-documents/pull/20)
+* Disallow folder name duplicates within same parent [PR #20](https://github.com/pinax/pinax-documents/pull/20)
+
+
+### 0.3.1
+
+### 0.3.0
+
+### 0.2.0
+
+### 0.1
+
 
 ## Pinax
 
