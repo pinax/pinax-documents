@@ -20,13 +20,12 @@
 
 * [Installation](#installation)
 * [Filters](#filters)
-* [Template tags](#templatetags)
-* [Changelog](#changelog)
+* [Template tags](#template-tags)
+* [Change Log](#change-log)
 * [Pinax](#pinax)
 * [Contribute](#contribute)
 * [Contributors](#contributors)
 * [Code of Conduct](#code-of-conduct)
-* [Contributors](#contributors)
 * [Pinax Project Blog and Twitter](#pinax-project-blog-and-twitter)
 
 
@@ -53,18 +52,19 @@ Add `pinax.documents.urls` to your project urlpatterns:
     ]
     
 
+## Template Tags
+
 `{% load pinax_documents_tags %}`
 
+### Filters
 
-## Filters
-
-### can_share
+#### can_share
 
 Returns True if `member` can share with `user`:
 
     {{ member|can_share:user }}
 
-### readable_bytes
+#### readable_bytes
 
 Display number of bytes using appropriate units.
 
