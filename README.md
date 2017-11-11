@@ -10,21 +10,25 @@
 [![](https://img.shields.io/pypi/v/pinax-documents.svg)](https://pypi.python.org/pypi/pinax-documents/)
 [![](https://img.shields.io/badge/license-MIT-blue.svg)](https://pypi.python.org/pypi/pinax-documents/)
 
-`pinax-documents` is a well tested, documented, and proven solution for any site that
-that wants to support document management.
+
+## pinax-documents
+
+`pinax-documents` is a well tested, documented, and proven document management app for collecting and sharing documents in folders.
+
 
 ## Table of Contents
 
-* [Development](#development)
 * [Installation](#installation)
 * [Filters](#filters)
 * [Template tags](#templatetags)
 * [Changelog](#changelog)
+* [Pinax](#pinax)
+* [Contribute](#contribute)
+* [Contributors](#contributors)
+* [Code of Conduct](#code-of-conduct)
+* [Contributors](#contributors)
+* [Pinax Project Blog and Twitter](#pinax-project-blog-and-twitter)
 
-
-## Development
-
-The source repository can be found at [https://github.com/pinax/pinax-documents]( https://github.com/pinax/pinax-documents).
 
 ## Installation
 
@@ -51,6 +55,7 @@ Add `pinax.documents.urls` to your project urlpatterns:
 
 `{% load pinax_documents_tags %}`
 
+
 ## Filters
 
 ### can_share
@@ -72,8 +77,11 @@ yields "70MB".
 
 ### 0.6.0
 
-* Moved docs to README.md
-* 
+* Add Django 2.0 compatibility testing
+* Drop Django 1.9 and Python 3.3 support
+* Convert CI and coverage to CircleCi and CodeCov
+* Add PyPi-compatible long description
+* Move documentation to README.md
 
 ### 0.4.2
 
@@ -86,14 +94,6 @@ yields "70MB".
 
 ### 0.4.0
 
-### Contributors
-
-* [Graham Ullrich](https://github.com/grahamu)
-* [Ethan A Kent](https://github.com/ethankent)
-* [Patrick Altman](https://github.com/paltman)
-
-### Changes
-
 * Moved template locations to be under `pinax/` [PR #9](https://github.com/pinax/pinax-documents/pull/9)
 * Namespaced URLs [PR #10](https://github.com/pinax/pinax-documents/pull/10), [PR #16](https://github.com/pinax/pinax-documents/pull/16)
 * Moved signal receiver to receivers.py [PR #11](https://github.com/pinax/pinax-documents/pull/11)
@@ -103,7 +103,6 @@ yields "70MB".
 * Folder deletion [PR #19](https://github.com/pinax/pinax-documents/pull/19)
 * Disallow document name duplicates within same folder [PR #20](https://github.com/pinax/pinax-documents/pull/20)
 * Disallow folder name duplicates within same parent [PR #20](https://github.com/pinax/pinax-documents/pull/20)
-
 
 ### 0.3.1
 
@@ -123,13 +122,6 @@ starter project templates.
 This app is part of the Pinax ecosystem and is designed for use both with and
 independently of other Pinax apps.
 
-## pinax-documents
-
-``pinax-documents`` is a document management app, collecting and sharing documents in folders.
-
-## Getting Started and Documentation
-
-Follow steps outlined in [Pinax Documents Documentation](https://github.com/pinax/pinax-documents/blob/master/docs/index.md).
 
 ## Contribute
 
@@ -138,6 +130,18 @@ See [this blog post](http://blog.pinaxproject.com/2016/02/26/recap-february-pina
 In case of any questions we recommend you [join our Pinax Slack team](http://slack.pinaxproject.com) and ping us there instead of creating an issue on GitHub. Creating issues on GitHub is of course also valid but we are usually able to help you faster if you ping us in Slack.
 
 We also highly recommend reading our [Open Source and Self-Care blog post](http://blog.pinaxproject.com/2016/01/19/open-source-and-self-care/).
+
+
+## Contributors
+
+* [Graham Ullrich](https://github.com/grahamu)
+* [Ethan A Kent](https://github.com/ethankent)
+* [Patrick Altman](https://github.com/paltman)
+* [Brian Rosner](https://github.com/brosner)
+* [Anna Ossowski](https://github.com/ossanna16)
+* [Thomas Schreiber](https://github.com/rizumu)
+* [John Franey](https://github.com/johnfraney)
+* [Katherine “Kati” Michel](https://github.com/KatherineMichel)
 
 
 ## Code of Conduct
