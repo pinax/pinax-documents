@@ -19,7 +19,6 @@
 ## Table of Contents
 
 * [Installation](#installation)
-* [Filters](#filters)
 * [Template tags](#template-tags)
 * [Change Log](#change-log)
 * [Pinax](#pinax)
