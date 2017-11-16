@@ -1,12 +1,9 @@
-import mock
-
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import HttpResponse
 
-from ..models import (
-    Document,
-    Folder,
-)
+import mock
+
+from ..models import Document, Folder
 from .test import BaseTest
 
 
@@ -133,7 +130,7 @@ class TestFolders(BaseTest):
         with self.login(self.user):
             response = self.get(self.delete_urlname, pk=parent_folder.pk)
             self.response_200(response)
-            self.assertTrue('pinax/documents/folder_confirm_delete.html' in response.template_name)
+            self.assertTrue("pinax/documents/folder_confirm_delete.html" in response.template_name)
 
             response = self.post(self.delete_urlname, pk=parent_folder.pk, follow=True)
             self.response_200(response)
@@ -358,7 +355,7 @@ class TestDocuments(BaseTest):
         with self.login(self.user):
             response = self.get(document.delete_url())
             self.response_200(response)
-            self.assertTrue('pinax/documents/document_confirm_delete.html' in response.template_name)
+            self.assertTrue("pinax/documents/document_confirm_delete.html" in response.template_name)
 
             response = self.post("pinax_documents:document_delete", pk=doc_pk, follow=True)
             self.response_200(response)

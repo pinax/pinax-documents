@@ -2,11 +2,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from test_plus.test import TestCase as PlusTestCase
 
-from ..exceptions import DuplicateFolderNameError, DuplicateDocumentNameError
-from ..models import (
-    Document,
-    Folder
-)
+from ..exceptions import DuplicateDocumentNameError, DuplicateFolderNameError
+from ..models import Document, Folder
 
 
 class BaseTest(PlusTestCase):

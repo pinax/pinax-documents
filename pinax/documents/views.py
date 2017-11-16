@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
 from django.db.models import F
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views import static
@@ -9,15 +9,13 @@ from django.views.generic import (
     CreateView,
     DeleteView,
     DetailView,
-    TemplateView,
+    TemplateView
 )
 from django.views.generic.detail import (
-    SingleObjectMixin, SingleObjectTemplateResponseMixin,
+    SingleObjectMixin,
+    SingleObjectTemplateResponseMixin
 )
-from django.views.generic.edit import (
-    FormMixin,
-    ProcessFormView,
-)
+from django.views.generic.edit import FormMixin, ProcessFormView
 
 from account.mixins import LoginRequiredMixin
 
@@ -29,11 +27,7 @@ from .forms import (
     FolderCreateForm
 )
 from .hooks import hookset
-from .models import (
-    Document,
-    Folder,
-    UserStorage,
-)
+from .models import Document, Folder, UserStorage
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
@@ -176,7 +170,7 @@ class FolderShare(LoginRequiredMixin,
 class FolderDelete(LoginRequiredMixin, DeleteView):
     model = Folder
     success_url = reverse_lazy("pinax_documents:document_index")
-    template_name = 'pinax/documents/folder_confirm_delete.html'
+    template_name = "pinax/documents/folder_confirm_delete.html"
 
     def delete(self, request, *args, **kwargs):
         hookset.folder_pre_delete(self.request, self.get_object())
@@ -303,7 +297,7 @@ class DocumentDownload(LoginRequiredMixin, DetailView):
 class DocumentDelete(LoginRequiredMixin, DeleteView):
     model = Document
     success_url = reverse_lazy("pinax_documents:document_index")
-    template_name = 'pinax/documents/document_confirm_delete.html'
+    template_name = "pinax/documents/document_confirm_delete.html"
 
     def delete(self, request, *args, **kwargs):
         success_url = super(DocumentDelete, self).delete(request, *args, **kwargs)

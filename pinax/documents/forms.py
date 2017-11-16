@@ -1,16 +1,13 @@
 from django import forms
 
+from .hooks import hookset
+from .models import Document, Folder
+
 try:
     from account.utils import user_display
 except ImportError:
     def user_display(user):
         return user.username
-
-from .hooks import hookset
-from .models import (
-    Document,
-    Folder,
-)
 
 
 class FolderCreateForm(forms.ModelForm):
