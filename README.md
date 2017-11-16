@@ -2,13 +2,16 @@
     
 # Pinax Documents
 
-[![](http://slack.pinaxproject.com/badge.svg)](http://slack.pinaxproject.com/)
+[![](https://img.shields.io/pypi/v/pinax-documents.svg)](https://pypi.python.org/pypi/pinax-documents/)
+[![](https://img.shields.io/badge/license-MIT-blue.svg)](https://pypi.python.org/pypi/pinax-documents/)
 
 [![CircleCi](https://img.shields.io/circleci/project/github/pinax/pinax-documents.svg)](https://circleci.com/gh/pinax/pinax-documents)
 [![Codecov](https://img.shields.io/codecov/c/github/pinax/pinax-documents.svg)](https://codecov.io/gh/pinax/pinax-documents)
-[![](https://img.shields.io/pypi/dm/pinax-documents.svg)](https://pypi.python.org/pypi/pinax-documents/)
-[![](https://img.shields.io/pypi/v/pinax-documents.svg)](https://pypi.python.org/pypi/pinax-documents/)
-[![](https://img.shields.io/badge/license-MIT-blue.svg)](https://pypi.python.org/pypi/pinax-documents/)
+![](https://img.shields.io/github/contributors/pinax/pinax-documents.svg)
+![](https://img.shields.io/github/issues-pr/pinax/pinax-documents.svg)
+![](https://img.shields.io/github/issues-pr-closed/pinax/pinax-documents.svg)
+
+[![](http://slack.pinaxproject.com/badge.svg)](http://slack.pinaxproject.com/)
 
 
 ## pinax-documents
