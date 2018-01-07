@@ -1,19 +1,19 @@
-from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
 from django.db.models import F
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.urls import reverse, reverse_lazy
 from django.utils.translation import ugettext as _
 from django.views import static
 from django.views.generic import (
     CreateView,
     DeleteView,
     DetailView,
-    TemplateView
+    TemplateView,
 )
 from django.views.generic.detail import (
     SingleObjectMixin,
-    SingleObjectTemplateResponseMixin
+    SingleObjectTemplateResponseMixin,
 )
 from django.views.generic.edit import FormMixin, ProcessFormView
 
@@ -24,7 +24,7 @@ from .forms import (
     ColleagueFolderShareForm,
     DocumentCreateForm,
     DocumentCreateFormWithName,
-    FolderCreateForm
+    FolderCreateForm,
 )
 from .hooks import hookset
 from .models import Document, Folder, UserStorage
