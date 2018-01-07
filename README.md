@@ -135,10 +135,6 @@ yields "70MB".
 * Disallow document name duplicates within same folder [PR #20](https://github.com/pinax/pinax-documents/pull/20)
 * Disallow folder name duplicates within same parent [PR #20](https://github.com/pinax/pinax-documents/pull/20)
 
-* [Graham Ullrich](https://github.com/grahamu)
-* [Ethan A Kent](https://github.com/ethankent)
-* [Patrick Altman](https://github.com/paltman)
-
 ### 0.3.1
 
 ### 0.3.0
