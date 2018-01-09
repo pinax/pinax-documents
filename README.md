@@ -20,7 +20,10 @@
   * [Supported Django and Python versions](#supported-django-and-python-versions)
 * [Documentation](#documentation)
   * [Installation](#installation)
+  * [Usage](#usage)
   * [Template Tags](#template-tags)
+  * [Hookset Methods](#hookset-methods)
+  * [Settings](#settings)
 * [Change Log](#change-log)
 * [Contribute](#contribute)
 * [Code of Conduct](#code-of-conduct)
@@ -57,19 +60,20 @@ To install pinax-documents:
 Add `pinax.documents` to your `INSTALLED_APPS` setting:
 
     INSTALLED_APPS = (
-        ...
+        # other apps
         "pinax.documents",
-        ...
     )
 
 Add `pinax.documents.urls` to your project urlpatterns:
 
     urlpatterns = [
-        ...
+        # other urls
         url(r"^docs/", include("pinax.documents.urls", namespace="pinax_documents")),
-        ...
     ]
     
+### Usage
+
+
 ### Template Tags
 
 `{% load pinax_documents_tags %}`
