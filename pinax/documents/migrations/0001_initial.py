@@ -22,15 +22,15 @@ class Migration(migrations.Migration):
                 ('created', models.DateTimeField(default=django.utils.timezone.now)),
                 ('modified', models.DateTimeField(default=django.utils.timezone.now)),
                 ('file', models.FileField(upload_to=pinax.documents.models.uuid_filename)),
-                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='+')),
+                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='+', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
             name='DocumentSharedUser',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
-                ('document', models.ForeignKey(to='documents.Document')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('document', models.ForeignKey(to='documents.Document', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -40,17 +40,17 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=140)),
                 ('created', models.DateTimeField(default=django.utils.timezone.now)),
                 ('modified', models.DateTimeField(default=django.utils.timezone.now)),
-                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='+')),
-                ('modified_by', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='+')),
-                ('parent', models.ForeignKey(blank=True, null=True, to='documents.Folder')),
+                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='+', on_delete=models.CASCADE)),
+                ('modified_by', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='+', on_delete=models.CASCADE)),
+                ('parent', models.ForeignKey(blank=True, null=True, to='documents.Folder', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
             name='FolderSharedUser',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
-                ('folder', models.ForeignKey(to='documents.Folder')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('folder', models.ForeignKey(to='documents.Folder', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -59,18 +59,18 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
                 ('bytes_used', models.BigIntegerField(default=0)),
                 ('bytes_total', models.BigIntegerField(default=0)),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL, related_name='storage')),
+                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL, related_name='storage', on_delete=models.CASCADE)),
             ],
         ),
         migrations.AddField(
             model_name='document',
             name='folder',
-            field=models.ForeignKey(to='documents.Folder', null=True),
+            field=models.ForeignKey(to='documents.Folder', null=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='document',
             name='modified_by',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='+'),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='+', on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='foldershareduser',

@@ -2,9 +2,9 @@ import itertools
 import math
 
 from django.contrib.auth import get_user_model
-from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import F
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
@@ -23,11 +23,11 @@ def uuid_filename(instance, filename):
 class Folder(models.Model):
 
     name = models.CharField(max_length=140)
-    parent = models.ForeignKey("self", null=True, blank=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+")
+    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+", on_delete=models.CASCADE)
     created = models.DateTimeField(default=timezone.now)
     modified = models.DateTimeField(default=timezone.now)
-    modified_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+")
+    modified_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+", on_delete=models.CASCADE)
 
     objects = FolderManager.from_queryset(FolderQuerySet)()
 
@@ -174,11 +174,11 @@ class Folder(models.Model):
 class Document(models.Model):
 
     name = models.CharField(max_length=255)
-    folder = models.ForeignKey(Folder, null=True, blank=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+")
+    folder = models.ForeignKey(Folder, null=True, blank=True, on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+", on_delete=models.CASCADE)
     created = models.DateTimeField(default=timezone.now)
     modified = models.DateTimeField(default=timezone.now)
-    modified_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+")
+    modified_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+", on_delete=models.CASCADE)
     file = models.FileField(upload_to=uuid_filename)
     original_filename = models.CharField(max_length=500)
 
@@ -293,7 +293,7 @@ class Document(models.Model):
 
 class MemberSharedUser(models.Model):
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     # @@@ privileges
 
     class Meta:
@@ -307,7 +307,7 @@ class MemberSharedUser(models.Model):
 
 class FolderSharedUser(MemberSharedUser):
 
-    folder = models.ForeignKey(Folder)
+    folder = models.ForeignKey(Folder, on_delete=models.CASCADE)
     obj_attr = "folder"
 
     class Meta:
@@ -316,7 +316,7 @@ class FolderSharedUser(MemberSharedUser):
 
 class DocumentSharedUser(MemberSharedUser):
 
-    document = models.ForeignKey(Document)
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)
     obj_attr = "document"
 
     class Meta:
@@ -325,7 +325,7 @@ class DocumentSharedUser(MemberSharedUser):
 
 class UserStorage(models.Model):
 
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name="storage")
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name="storage", on_delete=models.CASCADE)
     bytes_used = models.BigIntegerField(default=0)
     bytes_total = models.BigIntegerField(default=0)
 
