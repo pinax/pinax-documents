@@ -21,6 +21,8 @@
 * [Documentation](#documentation)
   * [Installation](#installation)
   * [Usage](#usage)
+  * [Views](#views)
+  * [Model Managers](#model-managers)
   * [Template Tags](#template-tags)
   * [Hookset Methods](#hookset-methods)
   * [Settings](#settings)
@@ -73,6 +75,117 @@ Add `pinax.documents.urls` to your project urlpatterns:
     
 ### Usage
 
+
+### Views
+
+Four views handle Document creation, detail, downloading, and deletion.
+Four views handle Folder creation, detail, sharing, and deletion.
+All views require an authenticated user but no special permission.
+
+#### document_create
+
+Validates form input to create a new Document. Optionally adds document
+to a specified Folder. Specify a folder by adding `?f=5` URL kwarg,
+where `5` is the PK of the desired Folder.
+Redirects to Document index view.
+
+URL: `pinax_documents:document_create`
+  
+Template: `pinax/documents/document_create.html`
+
+Form class: `pinax.forms.DocumentCreateForm`
+
+#### document_detail
+
+Shows document detail, if document is within the requesting user's scope.
+
+URL: `pinax_documents:document_detail`
+
+Template: `pinax/documents/document_detail.html`
+
+#### document_download
+
+Download a specified Document, if document is within requesting user's scope.
+
+URL: `pinax_documents:document_download`
+
+#### document_delete
+
+Delete the specified Document.
+Redirects to document index view.
+
+URL: `pinax_documents:document_create`
+
+Template: `pinax/documents/document_confirm_delete.html`
+
+#### document_index
+
+Show a list of Documents within user scope.
+
+URL: `pinax_documents:document_index`
+  
+Template: `pinax/documents/index.html`
+
+#### folder_create
+
+Create a new Folder.
+
+A folder can be created as a subfolder of an existing folder.
+To get this relationship specify the parent folder by adding `?p=3` URL kwarg,
+where `3` is the PK of the desired "parent" folder.
+
+URL: `pinax_documents:folder_create`
+  
+Template: `pinax/documents/folder_create.html`
+
+Form class: `pinax.forms.FolderCreateForm`
+
+#### folder_detail
+
+Shows folder detail, including all documents within the requesting user's scope.
+
+URL: `pinax_documents:folder_detail`
+
+Template: `pinax/documents/folder_detail.html`
+
+Detail view context variables:
+
+##### `members`
+
+User members of the folder.
+
+##### `can_share`
+
+True if user can share the folder.
+
+#### folder_share
+
+Share a folder with another user.
+
+URL: `pinax_documents:folder_share`
+
+Template: `pinax/documents/folder_share.html`
+
+#### folder_delete
+
+Delete the specified Folder.
+Redirects to document index view.
+
+URL: `pinax_documents:folder_delete`
+
+Template: `pinax/documents/folder_confirm_delete.html`
+
+### Model Managers
+
+#### `Folder.members(folder, **kwargs)`
+
+#### `Folder.objects.for_user(user)`
+
+Returns all Folders a user can do something with. Chainable query method.
+
+#### `Document.objects.for_user(user)`
+
+Returns all Documents a user can do something with. Chainable query method.
 
 ### Template Tags
 
@@ -170,6 +283,7 @@ your own hookset class:
 * Drop Django v1.8, v1.10 support
 * Replace _clone with _chain to fix unexpected keyword argument 'user' error
 * Add hookset documentation
+* Add view documentation
 
 ### 0.6.0
 
