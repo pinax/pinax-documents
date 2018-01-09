@@ -85,9 +85,9 @@ All views require an authenticated user but no special permission.
 #### document_create
 
 Validates form input to create a new Document. Optionally adds document
-to a specified Folder. Specify a folder by adding `?f=5` URL kwarg,
-where `5` is the PK of the desired Folder.
-Redirects to Document index view.
+to a specified Folder. Specify a folder by adding `?f=5` URL kwarg
+to the GET request, where `5` is the PK of the desired Folder.
+Redirects to the document index view.
 
 URL: `pinax_documents:document_create`
   
@@ -131,8 +131,8 @@ Template: `pinax/documents/index.html`
 Create a new Folder.
 
 A folder can be created as a subfolder of an existing folder.
-To get this relationship specify the parent folder by adding `?p=3` URL kwarg,
-where `3` is the PK of the desired "parent" folder.
+To create this relationship specify a parent folder by adding `?p=3` URL kwarg
+to the GET request, where `3` is the PK of the desired "parent" folder.
 
 URL: `pinax_documents:folder_create`
   
