@@ -100,11 +100,6 @@ class FolderDetail(LoginRequiredMixin, DetailView):
         qs = qs.for_user(self.request.user)
         return qs
 
-    def get_form_kwargs(self):
-        kwargs = super(FolderShare, self).get_form_kwargs()
-        kwargs.update({"folders": self.model.objects.for_user(self.request.user)})
-        return kwargs
-
     def get_context_data(self, **kwargs):
         context = super(FolderDetail, self).get_context_data(**kwargs)
         ctx = {
