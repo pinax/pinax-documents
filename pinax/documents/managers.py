@@ -63,6 +63,6 @@ class SharedMemberQuerySet(QuerySet):
                 obj._shared = True
             yield obj
 
-    def _clone(self, **kwargs):
+    def _chain(self, **kwargs):
         kwargs["user"] = self.user
-        return super(SharedMemberQuerySet, self)._clone(**kwargs)
+        return super(SharedMemberQuerySet, self)._chain(**kwargs)

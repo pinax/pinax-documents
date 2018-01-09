@@ -97,6 +97,7 @@ yields "70MB".
 
 * Standardize documentation layout
 * Drop Django v1.8, v1.10 support
+* Replace _clone with _chain to fix unexpected keyword argument 'user' error
 
 ### 0.6.0
 
