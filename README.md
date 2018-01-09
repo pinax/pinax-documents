@@ -91,6 +91,73 @@ Display number of bytes using appropriate units.
 yields "70MB".
 
 
+### Hookset Methods
+
+#### `already_exists_validation_message(name, folder)`
+
+String used to indicate a document with `name`
+already exists in `folder`.
+
+#### `can_share_folder(self, user, folder)`
+
+Return True if `user` can share `folder`.
+
+#### `document_created_message(self, request, document)`
+
+Success message when document is created.
+
+#### `document_deleted_message(self, request, document)`
+
+Success message when a document is deleted.
+
+#### `file_upload_to(self, instance, filename)`
+
+Callable passed to the FileField's `upload_to kwarg` on Document.file
+
+#### `folder_created_message(self, request, folder)`
+
+Success message when folder is created.
+
+#### `folder_deleted_message(self, request, folder)`
+
+Success message when a folder is deleted.
+
+#### `folder_pre_delete(self, request, folder)`
+
+Perform folder operations prior to deletions. For example, deleting all contents.
+
+#### `folder_shared_message(self, request, user, folder)`
+
+Success message when a folder is shared.
+
+#### `folder_unshared_message(self, request, user, folder)`
+
+Success message when a folder is unshared.
+
+#### `share_with_options(self, user, folder)`
+
+Return a list of users with whom `user` can share `folder`.
+
+#### `storage_color(self, user_storage)`
+
+Returns a label indicating amount of storage used.
+
+* "success" - sixty percent or more available
+* "warning" - forty percent or less storage remaining
+* "danger" - ten percent or less storage remaining
+
+
+### Settings
+
+#### PINAX_DOCUMENTS_HOOKSET
+
+Used to provide your own custom hookset methods, as described above. Value is a dotted path to
+your own hookset class:
+
+`PINAX_DOCUMENTS_HOOKSET = "myapp.hooks.DocumentsHookSet"`
+
+
+
 ## Change Log
 
 ### 1.0.0
@@ -98,6 +165,7 @@ yields "70MB".
 * Standardize documentation layout
 * Drop Django v1.8, v1.10 support
 * Replace _clone with _chain to fix unexpected keyword argument 'user' error
+* Add hookset documentation
 
 ### 0.6.0
 
