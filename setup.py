@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 LONG_DESCRIPTION = """
 .. image:: http://pinaxproject.com/pinax-design/patches/pinax-documents.svg
     :target: https://pypi.python.org/pypi/pinax-documents/
@@ -80,15 +80,17 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     install_requires=[
+        "django>=1.11",
         "django-appconf>=1.0.1"
     ],
     tests_require=[
         "dj-inmemorystorage>=1.4.0",
         "django-appconf>=1.0.1",
-        "django-test-plus>=1.0.11",
-        "mock>=1.3.0",
-        "django-user-accounts>=1.3.1",
-        "pinax-theme-bootstrap>=7.6.0",
+        "django-bootstrap-form>=3.0.0",
+        "django-test-plus>=1.0.22",
+        "django-user-accounts>=2.0.3",
+        "mock>=2.0.0",
+        "pinax-templates>=1.0.0",
     ],
     test_suite="runtests.runtests",
     zip_safe=False

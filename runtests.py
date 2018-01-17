@@ -15,7 +15,7 @@ DEFAULT_SETTINGS = dict(
         "django.contrib.sessions",
         "pinax.documents",
         "pinax.documents.tests",
-        "pinax_theme_bootstrap",
+        "pinax.templates",
         "bootstrapform",
         "account",
     ],

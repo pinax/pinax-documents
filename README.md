@@ -57,21 +57,27 @@ Django \ Python | 2.7 | 3.4 | 3.5 | 3.6
 
 To install pinax-documents:
 
-    pip install pinax-documents
+```commandline
+    $ pip install pinax-documents
+```
 
 Add `pinax.documents` to your `INSTALLED_APPS` setting:
 
-    INSTALLED_APPS = (
+```python
+    INSTALLED_APPS = [
         # other apps
         "pinax.documents",
-    )
+    ]
+```
 
 Add `pinax.documents.urls` to your project urlpatterns:
 
+```python
     urlpatterns = [
         # other urls
         url(r"^docs/", include("pinax.documents.urls", namespace="pinax_documents")),
     ]
+```
     
 ### Usage
 
@@ -197,13 +203,17 @@ Returns all Documents a user can do something with. Chainable query method.
 
 Returns True if `member` can share with `user`:
 
+```djangotemplate
     {{ member|can_share:user }}
+```
 
 ##### readable_bytes
 
 Display number of bytes using appropriate units.
 
+```djangotemplate
     {{ 73741824|readable_bytes }}
+```
 
 yields "70MB".
 
@@ -276,6 +286,13 @@ your own hookset class:
 
 
 ## Change Log
+
+### 1.0.1
+
+* Update requirements
+* Replace pinax-theme-bootstrap requirement with pinax-templates
+* Remove doc build support
+* Improve documentation markup
 
 ### 1.0.0
 

@@ -1,17 +1,10 @@
-all: init docs test
+all: init test
 
 init:
 	python setup.py develop
-	pip install detox coverage Sphinx
+	pip install detox coverage
 
 test:
 	coverage erase
 	detox
 	coverage html
-
-docs: documentation
-
-documentation:
-	python setup.py build_sphinx
-
-.PHONY: docs
