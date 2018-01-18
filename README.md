@@ -60,7 +60,7 @@ Django \ Python | 2.7 | 3.4 | 3.5 | 3.6
 
 To install pinax-documents:
 
-```commandline
+```shell
     $ pip install pinax-documents
 ```
 
@@ -197,7 +197,9 @@ Returns all Documents a user can do something with. Chainable query method.
 
 ### Template Tags
 
+```django
 `{% load pinax_documents_tags %}`
+```
 
 #### Filters
 
@@ -205,7 +207,7 @@ Returns all Documents a user can do something with. Chainable query method.
 
 Returns True if `member` can share with `user`:
 
-```djangotemplate
+```django
     {{ member|can_share:user }}
 ```
 
@@ -213,7 +215,7 @@ Returns True if `member` can share with `user`:
 
 Display number of bytes using appropriate units.
 
-```djangotemplate
+```django
     {{ 73741824|readable_bytes }}
 ```
 
@@ -281,8 +283,9 @@ Returns a label indicating amount of storage used.
 Used to provide your own custom hookset methods, as described above. Value is a dotted path to
 your own hookset class:
 
+```django
 `PINAX_DOCUMENTS_HOOKSET = "myapp.hooks.DocumentsHookSet"`
-
+```
 
 ## Change Log
 
