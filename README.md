@@ -284,7 +284,7 @@ Used to provide your own custom hookset methods, as described above. Value is a 
 your own hookset class:
 
 ```django
-`PINAX_DOCUMENTS_HOOKSET = "myapp.hooks.DocumentsHookSet"`
+PINAX_DOCUMENTS_HOOKSET = "myapp.hooks.DocumentsHookSet"
 ```
 
 ## Change Log
