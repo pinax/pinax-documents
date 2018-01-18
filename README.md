@@ -13,6 +13,7 @@
 [![](http://slack.pinaxproject.com/badge.svg)](http://slack.pinaxproject.com/)
 [![](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
+
 ## Table of Contents
 
 * [About Pinax](#about-pinax)
@@ -32,10 +33,12 @@
 * [Connect with Pinax](#connect-with-pinax)
 * [License](#license)
 
+
 ## About Pinax
 
 Pinax is an open-source platform built on the Django Web Framework. It is an ecosystem of reusable
 Django apps, themes, and starter project templates. This collection can be found at http://pinaxproject.com.
+
 
 ## pinax-documents
 
@@ -78,9 +81,8 @@ Add `pinax.documents.urls` to your project urlpatterns:
         url(r"^docs/", include("pinax.documents.urls", namespace="pinax_documents")),
     ]
 ```
-    
+  
 ### Usage
-
 
 ### Views
 
@@ -217,7 +219,6 @@ Display number of bytes using appropriate units.
 
 yields "70MB".
 
-
 ### Hookset Methods
 
 #### `already_exists_validation_message(name, folder)`
@@ -273,7 +274,6 @@ Returns a label indicating amount of storage used.
 * "warning" - forty percent or less storage remaining
 * "danger" - ten percent or less storage remaining
 
-
 ### Settings
 
 #### PINAX_DOCUMENTS_HOOKSET
@@ -282,7 +282,6 @@ Used to provide your own custom hookset methods, as described above. Value is a 
 your own hookset class:
 
 `PINAX_DOCUMENTS_HOOKSET = "myapp.hooks.DocumentsHookSet"`
-
 
 
 ## Change Log
