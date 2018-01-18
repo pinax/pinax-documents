@@ -10,7 +10,7 @@ Pinax Documents
 ===============
 
 .. image:: https://img.shields.io/pypi/v/pinax-documents.svg
-    :target: https://opensource.org/licenses/MIT/
+    :target: https://pypi.python.org/pypi/pinax-documents/
 
 \ 
 
@@ -30,7 +30,7 @@ Pinax Documents
 .. image:: http://slack.pinaxproject.com/badge.svg
     :target: http://slack.pinaxproject.com/
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
-    :target: https://pypi.python.org/pypi/pinax-documents/
+    :target: https://opensource.org/licenses/MIT/
 
 \ 
 
