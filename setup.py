@@ -10,7 +10,7 @@ Pinax Documents
 ===============
 
 .. image:: https://img.shields.io/pypi/v/pinax-documents.svg
-    :target: https://pypi.python.org/pypi/pinax-documents/
+    :target: https://opensource.org/licenses/MIT/
 
 \ 
 
