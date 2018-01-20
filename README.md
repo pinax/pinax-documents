@@ -27,6 +27,7 @@
   * [Template Tags](#template-tags)
   * [Hookset Methods](#hookset-methods)
   * [Settings](#settings)
+  * [Templates](#templates)
 * [Change Log](#change-log)
 * [Contribute](#contribute)
 * [Code of Conduct](#code-of-conduct)
@@ -129,7 +130,6 @@ Template: `pinax/documents/document_confirm_delete.html`
 #### document_index
 
 Show a list of Documents within user scope.
-
 URL: `pinax_documents:document_index`
   
 Template: `pinax/documents/index.html`
@@ -198,7 +198,7 @@ Returns all Documents a user can do something with. Chainable query method.
 ### Template Tags
 
 ```django
-`{% load pinax_documents_tags %}`
+{% load pinax_documents_tags %}
 ```
 
 #### Filters
@@ -287,6 +287,48 @@ your own hookset class:
 PINAX_DOCUMENTS_HOOKSET = "myapp.hooks.DocumentsHookSet"
 ```
 
+
+### Templates
+
+Default templates are provided by the `pinax-templates` app in the
+[documents](https://github.com/pinax/pinax-templates/tree/master/pinax/templates/templates/pinax/documents)
+section of that project.
+
+Reference pinax-templates
+[installation instructions](https://github.com/pinax/pinax-templates/blob/master/README.md#installation)
+to include these templates in your project.
+
+#### Customizing Templates
+
+Override the default `pinax-templates` templates by copying them into your project
+subdirectory `pinax/documents/` on the template path and modifying as needed.
+
+For example if your project doesn't use Bootstrap, copy the desired templates
+then remove Bootstrap and Font Awesome class names from your copies.
+Remove class references like `class="btn btn-success"` and `class="icon icon-pencil"` as well as
+`bootstrap` from the `{% load i18n bootstrap %}` statement.
+Since `bootstrap` template tags and filters are no longer loaded, you'll also need to update
+`{{ form|bootstrap }}` to `{{ form }}` since the "bootstrap" filter is no longer available.
+
+#### `base.html`
+
+#### `document_confirm_delete.html`
+
+#### `document_create.html`
+
+#### `document_detail.html`
+
+#### `folder_confirm_delete.html`
+
+#### `folder_create.html`
+
+#### `folder_detail.html`
+
+#### `folder_share.html`
+
+#### `index.html`
+
+
 ## Change Log
 
 ### 1.0.1
@@ -322,14 +364,6 @@ PINAX_DOCUMENTS_HOOKSET = "myapp.hooks.DocumentsHookSet"
 * Updating documentation
 
 ### 0.4.0
-
-#### Contributors
-
-* [Graham Ullrich](https://github.com/grahamu)
-* [Ethan A Kent](https://github.com/ethankent)
-* [Patrick Altman](https://github.com/paltman)
-
-#### Changes
 
 * Moved template locations to be under `pinax/` [PR #9](https://github.com/pinax/pinax-documents/pull/9)
 * Namespaced URLs [PR #10](https://github.com/pinax/pinax-documents/pull/10), [PR #16](https://github.com/pinax/pinax-documents/pull/16)
