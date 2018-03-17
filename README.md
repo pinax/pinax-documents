@@ -373,6 +373,11 @@ Since `bootstrap` template tags and filters are no longer loaded, you'll also ne
 
 ## Change Log
 
+### 1.0.2
+
+* Allow use with any account-management package by removing django-user-accounts dependency
+* Require pinax-templates>=2.0.0 if using pinax-templates without django-user-accounts
+
 ### 1.0.1
 
 * Update requirements
