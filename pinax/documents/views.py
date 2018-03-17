@@ -17,8 +17,7 @@ from django.views.generic.detail import (
 )
 from django.views.generic.edit import FormMixin, ProcessFormView
 
-from account.mixins import LoginRequiredMixin
-
+from .compat import LoginRequiredMixin
 from .conf import settings
 from .forms import (
     ColleagueFolderShareForm,

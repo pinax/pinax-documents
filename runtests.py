@@ -17,7 +17,6 @@ DEFAULT_SETTINGS = dict(
         "pinax.documents.tests",
         "pinax.templates",
         "bootstrapform",
-        "account",
     ],
     MIDDLEWARE=[
         "django.contrib.sessions.middleware.SessionMiddleware",
