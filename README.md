@@ -287,7 +287,6 @@ your own hookset class:
 PINAX_DOCUMENTS_HOOKSET = "myapp.hooks.DocumentsHookSet"
 ```
 
-
 ### Templates
 
 Default templates are provided by the `pinax-templates` app in the
@@ -299,46 +298,6 @@ Reference pinax-templates
 to include these templates in your project.
 
 View live `pinax-templates` examples and source at [Pinax Templates](https://templates.pinaxproject.com/documents/)!
-
-#### Customizing Templates
-
-Override the default `pinax-templates` templates by copying them into your project
-subdirectory `pinax/documents/` on the template path and modifying as needed.
-
-For example if your project doesn't use Bootstrap, copy the desired templates
-then remove Bootstrap and Font Awesome class names from your copies.
-Remove class references like `class="btn btn-success"` and `class="icon icon-pencil"` as well as
-`bootstrap` from the `{% load i18n bootstrap %}` statement.
-Since `bootstrap` template tags and filters are no longer loaded, you'll also need to update
-`{{ form|bootstrap }}` to `{{ form }}` since the "bootstrap" filter is no longer available.
-
-#### `base.html`
-
-#### `document_confirm_delete.html`
-
-#### `document_create.html`
-
-#### `document_detail.html`
-
-#### `folder_confirm_delete.html`
-
-#### `folder_create.html`
-
-#### `folder_detail.html`
-
-#### `folder_share.html`
-
-#### `index.html`
-
-### Templates
-
-Default templates are provided by the `pinax-templates` app in the
-[documents](https://github.com/pinax/pinax-templates/tree/master/pinax/templates/templates/pinax/documents)
-section of that project.
-
-Reference pinax-templates
-[installation instructions](https://github.com/pinax/pinax-templates/blob/master/README.md#installation)
-to include these templates in your project.
 
 #### Customizing Templates
 
