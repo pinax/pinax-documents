@@ -49,10 +49,10 @@ Django apps, themes, and starter project templates. This collection can be found
 
 #### Supported Django and Python versions
 
-Django \ Python | 2.7 | 3.4 | 3.5 | 3.6
---------------- | --- | --- | --- | ---
-1.11 |  *  |  *  |  *  |  *  
-2.0  |     |  *  |  *  |  *
+Django / Python | 3.6 | 3.7 | 3.8
+--------------- | --- | --- | ---
+2.2  |  *  |  *  |  *
+3.0  |  *  |  *  |  *
 
 
 ## Documentation
@@ -82,7 +82,7 @@ Add `pinax.documents.urls` to your project urlpatterns:
         url(r"^docs/", include("pinax.documents.urls", namespace="pinax_documents")),
     ]
 ```
-  
+
 ### Usage
 
 ### Views
@@ -99,7 +99,7 @@ to the GET request, where `5` is the PK of the desired Folder.
 Redirects to the document index view.
 
 URL: `pinax_documents:document_create`
-  
+
 Template: `pinax/documents/document_create.html`
 
 Form class: `pinax.forms.DocumentCreateForm`
@@ -131,7 +131,7 @@ Template: `pinax/documents/document_confirm_delete.html`
 
 Show a list of Documents within user scope.
 URL: `pinax_documents:document_index`
-  
+
 Template: `pinax/documents/index.html`
 
 #### folder_create
@@ -143,7 +143,7 @@ To create this relationship specify a parent folder by adding `?p=3` URL kwarg
 to the GET request, where `3` is the PK of the desired "parent" folder.
 
 URL: `pinax_documents:folder_create`
-  
+
 Template: `pinax/documents/folder_create.html`
 
 Form class: `pinax.forms.FolderCreateForm`
@@ -419,4 +419,4 @@ and check out our [Pinax Project blog](http://blog.pinaxproject.com).
 
 ## License
 
-Copyright (c) 2012-2019 James Tauber and contributors under the [MIT license](https://opensource.org/licenses/MIT).
+Copyright (c) 2012-present James Tauber and contributors under the [MIT license](https://opensource.org/licenses/MIT).
