@@ -8,7 +8,7 @@ from django.utils.translation import ugettext as _
 from .conf import settings
 
 
-class DocumentsDefaultHookSet(object):
+class DocumentsDefaultHookSet:
 
     def share_with_options(self, user, folder):
         """
@@ -93,7 +93,7 @@ class DocumentsDefaultHookSet(object):
         return "{} already exists.".format(name)
 
 
-class HookProxy(object):
+class HookProxy:
 
     def __getattr__(self, attr):
         return getattr(settings.DOCUMENTS_HOOKSET, attr)
