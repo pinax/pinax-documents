@@ -10,7 +10,7 @@ from .test import BaseTest
 class TestFolders(BaseTest):
 
     def setUp(self):
-        super(TestFolders, self).setUp()
+        super().setUp()
         self.create_urlname = "pinax_documents:folder_create"
         self.detail_urlname = "pinax_documents:folder_detail"
         self.share_urlname = "pinax_documents:folder_share"
@@ -228,7 +228,7 @@ class TestFolders(BaseTest):
 class TestDocuments(BaseTest):
 
     def setUp(self):
-        super(TestDocuments, self).setUp()
+        super().setUp()
         self.create_urlname = "pinax_documents:document_create"
         self.detail_urlname = "pinax_documents:document_detail"
         self.download_urlname = "pinax_documents:document_download"

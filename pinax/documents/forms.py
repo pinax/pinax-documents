@@ -27,7 +27,7 @@ class FolderCreateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         folders = kwargs.pop("folders")
-        super(FolderCreateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["parent"].queryset = folders
 
 
@@ -43,7 +43,7 @@ class DocumentCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         folders = kwargs.pop("folders")
         self.storage = kwargs.pop("storage")
-        super(DocumentCreateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["folder"].queryset = folders
 
     def clean_file(self):
@@ -95,5 +95,5 @@ class ColleagueFolderShareForm(FolderShareForm):
 
     def __init__(self, *args, **kwargs):
         colleagues = kwargs.pop("colleagues")
-        super(ColleagueFolderShareForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["participants"].queryset = colleagues

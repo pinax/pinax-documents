@@ -47,7 +47,7 @@ class Folder(models.Model):
         if not self.pk and Folder.already_exists(self.name, self.parent):
             raise DuplicateFolderNameError("{} already exists in this folder.".format(self.name))
         self.touch(self.author, commit=False)
-        super(Folder, self).save(**kwargs)
+        super().save(**kwargs)
 
     def get_absolute_url(self):
         return reverse("pinax_documents:folder_detail", args=[self.pk])
@@ -186,7 +186,7 @@ class Document(models.Model):
 
     def delete(self, *args, **kwargs):
         bytes_to_free = self.size
-        super(Document, self).delete(*args, **kwargs)
+        super().delete(*args, **kwargs)
         storage_qs = UserStorage.objects.filter(pk=self.author.storage.pk)
         storage_qs.update(bytes_used=F("bytes_used") - bytes_to_free)
 
@@ -205,7 +205,7 @@ class Document(models.Model):
         if not self.pk and Document.already_exists(self.name, self.folder):
             raise DuplicateDocumentNameError("{} already exists in this folder.".format(self.name))
         self.touch(self.author, commit=False)
-        super(Document, self).save(**kwargs)
+        super().save(**kwargs)
 
     def get_absolute_url(self):
         return reverse("pinax_documents:document_detail", args=[self.pk])
