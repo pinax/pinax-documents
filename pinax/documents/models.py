@@ -6,7 +6,6 @@ from django.db import models
 from django.db.models import F
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
 
 from .compat import izip_longest
 from .conf import settings
@@ -19,7 +18,6 @@ def uuid_filename(instance, filename):
     return hookset.file_upload_to(instance, filename)
 
 
-@python_2_unicode_compatible
 class Folder(models.Model):
 
     name = models.CharField(max_length=140)
@@ -170,7 +168,6 @@ class Folder(models.Model):
         )
 
 
-@python_2_unicode_compatible
 class Document(models.Model):
 
     name = models.CharField(max_length=255)
