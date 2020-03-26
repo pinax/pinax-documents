@@ -2,7 +2,7 @@ import os
 import sys
 from setuptools import find_packages, setup
 
-VERSION = "1.0.2"
+VERSION = "2.0.0"
 LONG_DESCRIPTION = """
 .. image:: http://pinaxproject.com/pinax-design/patches/pinax-documents.svg
     :target: https://pypi.python.org/pypi/pinax-documents/
@@ -59,7 +59,7 @@ if sys.argv[-1] == 'publish':
 
 setup(
     author="Pinax Team",
-    author_email="team@pinaxprojects.com",
+    author_email="team@pinaxproject.com",
     description="a document management app for Django",
     name="pinax-documents",
     long_description=LONG_DESCRIPTION,
