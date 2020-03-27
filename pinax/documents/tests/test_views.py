@@ -100,7 +100,7 @@ class TestFolders(BaseTest):
         with self.login(self.user):
             response = self.post(self.create_urlname, data=post_args, follow=True)
             self.response_200(response)
-            self.assertTrue("{} already exists.".format(folder_name) in str(response.context["form"].errors))
+            self.assertTrue(f"{folder_name} already exists." in str(response.context["form"].errors))
             self.assertFalse("object" in self.last_response.context)
 
     def test_detail(self):

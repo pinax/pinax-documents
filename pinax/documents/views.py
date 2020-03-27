@@ -135,7 +135,7 @@ class FolderShare(LoginRequiredMixin,
     def get_object(self):
         folder = super().get_object()
         if not folder.can_share(self.request.user):
-            raise Http404(_("Cannot share folder '{}'.".format(folder)))
+            raise Http404(_(f"Cannot share folder '{folder}'."))
         return folder
 
     def get_form_kwargs(self):

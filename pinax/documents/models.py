@@ -45,7 +45,7 @@ class Folder(models.Model):
 
     def save(self, **kwargs):
         if not self.pk and Folder.already_exists(self.name, self.parent):
-            raise DuplicateFolderNameError("{} already exists in this folder.".format(self.name))
+            raise DuplicateFolderNameError(f"{self.name} already exists in this folder.")
         self.touch(self.author, commit=False)
         super().save(**kwargs)
 
@@ -203,7 +203,7 @@ class Document(models.Model):
 
     def save(self, **kwargs):
         if not self.pk and Document.already_exists(self.name, self.folder):
-            raise DuplicateDocumentNameError("{} already exists in this folder.".format(self.name))
+            raise DuplicateDocumentNameError(f"{self.name} already exists in this folder.")
         self.touch(self.author, commit=False)
         super().save(**kwargs)
 

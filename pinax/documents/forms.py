@@ -23,7 +23,7 @@ class FolderCreateForm(forms.ModelForm):
         name = self.cleaned_data["name"]
         parent = self.cleaned_data.get("parent")
         if Folder.already_exists(name, parent):
-            raise forms.ValidationError("{} already exists.".format(name))
+            raise forms.ValidationError(f"{name} already exists.")
 
     def __init__(self, *args, **kwargs):
         folders = kwargs.pop("folders")
