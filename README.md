@@ -59,7 +59,7 @@ Where you can find what you need:
 
 `pinax-documents` is a well tested, documented, and proven document management app for collecting and sharing documents in folders.
 
-#### Supported Django and Python versions
+#### Supported Django and Python Versions
 
 Django / Python | 3.6 | 3.7 | 3.8
 --------------- | --- | --- | ---
