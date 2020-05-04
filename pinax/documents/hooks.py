@@ -40,7 +40,7 @@ class DocumentsDefaultHookSet:
         """
         Send messages.success message after successful folder creation.
         """
-        messages.success(request, _(f"Folder {folder} was created")
+        messages.success(request, _(f"Folder {folder} was created"))
 
     def document_created_message(self, request, document):
         """
