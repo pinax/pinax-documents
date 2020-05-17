@@ -1,7 +1,7 @@
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import HttpResponse
 
-import mock
+from unittest import mock
 
 from ..models import Document, Folder
 from .test import BaseTest
