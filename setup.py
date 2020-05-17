@@ -50,13 +50,6 @@ Supported Django and Python Versions
 +-----------------+-----+-----+-----+
 """
 
-
-# Publish Helper.
-if sys.argv[-1] == 'publish':
-    os.system('python setup.py sdist bdist_wheel upload')
-    sys.exit()
-
-
 setup(
     author="Pinax Team",
     author_email="team@pinaxproject.com",
