@@ -6,9 +6,7 @@ from django.db import models
 from django.db.models import F
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
 
-from .compat import izip_longest
 from .conf import settings
 from .exceptions import DuplicateDocumentNameError, DuplicateFolderNameError
 from .hooks import hookset
@@ -19,7 +17,6 @@ def uuid_filename(instance, filename):
     return hookset.file_upload_to(instance, filename)
 
 
-@python_2_unicode_compatible
 class Folder(models.Model):
 
     name = models.CharField(max_length=140)
@@ -48,9 +45,9 @@ class Folder(models.Model):
 
     def save(self, **kwargs):
         if not self.pk and Folder.already_exists(self.name, self.parent):
-            raise DuplicateFolderNameError("{} already exists in this folder.".format(self.name))
+            raise DuplicateFolderNameError(f"{self.name} already exists in this folder.")
         self.touch(self.author, commit=False)
-        super(Folder, self).save(**kwargs)
+        super().save(**kwargs)
 
     def get_absolute_url(self):
         return reverse("pinax_documents:folder_detail", args=[self.pk])
@@ -130,7 +127,7 @@ class Folder(models.Model):
         root = self
         a, b = itertools.tee(reversed(self.breadcrumbs()))
         next(b, None)
-        for folder, parent in izip_longest(a, b):
+        for folder, parent in itertools.zip_longest(a, b):
             if folder.shared:
                 root = folder
             if parent is None or not parent.shared:
@@ -170,7 +167,6 @@ class Folder(models.Model):
         )
 
 
-@python_2_unicode_compatible
 class Document(models.Model):
 
     name = models.CharField(max_length=255)
@@ -190,7 +186,7 @@ class Document(models.Model):
 
     def delete(self, *args, **kwargs):
         bytes_to_free = self.size
-        super(Document, self).delete(*args, **kwargs)
+        super().delete(*args, **kwargs)
         storage_qs = UserStorage.objects.filter(pk=self.author.storage.pk)
         storage_qs.update(bytes_used=F("bytes_used") - bytes_to_free)
 
@@ -207,9 +203,9 @@ class Document(models.Model):
 
     def save(self, **kwargs):
         if not self.pk and Document.already_exists(self.name, self.folder):
-            raise DuplicateDocumentNameError("{} already exists in this folder.".format(self.name))
+            raise DuplicateDocumentNameError(f"{self.name} already exists in this folder.")
         self.touch(self.author, commit=False)
-        super(Document, self).save(**kwargs)
+        super().save(**kwargs)
 
     def get_absolute_url(self):
         return reverse("pinax_documents:document_detail", args=[self.pk])

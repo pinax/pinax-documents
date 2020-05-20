@@ -1,7 +1,7 @@
+from unittest import mock
+
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import HttpResponse
-
-import mock
 
 from ..models import Document, Folder
 from .test import BaseTest
@@ -10,7 +10,7 @@ from .test import BaseTest
 class TestFolders(BaseTest):
 
     def setUp(self):
-        super(TestFolders, self).setUp()
+        super().setUp()
         self.create_urlname = "pinax_documents:folder_create"
         self.detail_urlname = "pinax_documents:folder_detail"
         self.share_urlname = "pinax_documents:folder_share"
@@ -100,7 +100,7 @@ class TestFolders(BaseTest):
         with self.login(self.user):
             response = self.post(self.create_urlname, data=post_args, follow=True)
             self.response_200(response)
-            self.assertTrue("{} already exists.".format(folder_name) in str(response.context["form"].errors))
+            self.assertTrue(f"{folder_name} already exists." in str(response.context["form"].errors))
             self.assertFalse("object" in self.last_response.context)
 
     def test_detail(self):
@@ -228,7 +228,7 @@ class TestFolders(BaseTest):
 class TestDocuments(BaseTest):
 
     def setUp(self):
-        super(TestDocuments, self).setUp()
+        super().setUp()
         self.create_urlname = "pinax_documents:document_create"
         self.detail_urlname = "pinax_documents:document_detail"
         self.download_urlname = "pinax_documents:document_download"

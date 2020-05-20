@@ -3,12 +3,12 @@ import uuid
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from .conf import settings
 
 
-class DocumentsDefaultHookSet(object):
+class DocumentsDefaultHookSet:
 
     def share_with_options(self, user, folder):
         """
@@ -40,25 +40,25 @@ class DocumentsDefaultHookSet(object):
         """
         Send messages.success message after successful folder creation.
         """
-        messages.success(request, _("Folder {} was created".format(folder)))
+        messages.success(request, _(f"Folder {folder} was created"))
 
     def document_created_message(self, request, document):
         """
         Send messages.success message after successful document creation.
         """
-        messages.success(request, _("Document {} was created".format(document)))
+        messages.success(request, _(f"Document {document} was created"))
 
     def folder_shared_message(self, request, user, folder):
         """
         Send messages.success message after successful share.
         """
-        messages.success(request, _("Folder {} is now shared with {}".format(folder, user)))
+        messages.success(request, _(f"Folder {folder} is now shared with {user}"))
 
     def folder_unshared_message(self, request, user, folder):
         """
         Send messages.success message after successful unshare.
         """
-        messages.success(request, _("User {} no longer shares Folder {}".format(user, folder)))
+        messages.success(request, _(f"User {user} no longer shares Folder {folder}"))
 
     def document_deleted_message(self, request, document):
         """
@@ -86,14 +86,14 @@ class DocumentsDefaultHookSet(object):
         Callable passed to the FileField's upload_to kwarg on Document.file
         """
         ext = filename.split(".")[-1]
-        filename = "{}.{}".format(uuid.uuid4(), ext)
+        filename = f"{uuid.uuid4()}.{ext}"
         return os.path.join("document", filename)
 
     def already_exists_validation_message(self, name, folder):
-        return "{} already exists.".format(name)
+        return f"{name} already exists."
 
 
-class HookProxy(object):
+class HookProxy:
 
     def __getattr__(self, attr):
         return getattr(settings.DOCUMENTS_HOOKSET, attr)

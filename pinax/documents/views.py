@@ -3,7 +3,7 @@ from django.db.models import F
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.views import static
 from django.views.generic import (
     CreateView,
@@ -55,19 +55,19 @@ class FolderCreate(LoginRequiredMixin, CreateView):
             self.parent = get_object_or_404(qs, pk=request.GET["p"])
         else:
             self.parent = None
-        return super(FolderCreate, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         kwargs.setdefault("parent", self.parent)
-        return super(FolderCreate, self).get_context_data(**kwargs)
+        return super().get_context_data(**kwargs)
 
     def get_initial(self):
         if self.parent:
             self.initial["parent"] = self.parent
-        return super(FolderCreate, self).get_initial()
+        return super().get_initial()
 
     def get_form_kwargs(self):
-        kwargs = super(FolderCreate, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs.update({"folders": self.model.objects.for_user(self.request.user)})
         return kwargs
 
@@ -95,12 +95,12 @@ class FolderDetail(LoginRequiredMixin, DetailView):
     template_name = "pinax/documents/folder_detail.html"
 
     def get_queryset(self):
-        qs = super(FolderDetail, self).get_queryset()
+        qs = super().get_queryset()
         qs = qs.for_user(self.request.user)
         return qs
 
     def get_context_data(self, **kwargs):
-        context = super(FolderDetail, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         ctx = {
             "members": self.object.members(user=self.request.user),
             "can_share": self.object.can_share(self.request.user),
@@ -121,25 +121,25 @@ class FolderShare(LoginRequiredMixin,
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        return super(FolderShare, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        return super(FolderShare, self).post(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
 
     def get_queryset(self):
-        qs = super(FolderShare, self).get_queryset()
+        qs = super().get_queryset()
         qs = qs.for_user(self.request.user)
         return qs
 
     def get_object(self):
-        folder = super(FolderShare, self).get_object()
+        folder = super().get_object()
         if not folder.can_share(self.request.user):
-            raise Http404(_("Cannot share folder '{}'.".format(folder)))
+            raise Http404(_(f"Cannot share folder '{folder}'."))
         return folder
 
     def get_form_kwargs(self):
-        kwargs = super(FolderShare, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         can_share_with = hookset.share_with_options(self.request.user, self.object)
         kwargs.update({"colleagues": can_share_with})
         return kwargs
@@ -153,7 +153,7 @@ class FolderShare(LoginRequiredMixin,
         return reverse("pinax_documents:folder_detail", args=[self.object.pk])
 
     def get_context_data(self, **kwargs):
-        context = super(FolderShare, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         ctx = {
             "participants": self.object.shared_with(),
         }
@@ -168,7 +168,7 @@ class FolderDelete(LoginRequiredMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         hookset.folder_pre_delete(self.request, self.get_object())
-        success_url = super(FolderDelete, self).delete(request, *args, **kwargs)
+        success_url = super().delete(request, *args, **kwargs)
         hookset.folder_deleted_message(self.request, self.object)
         return success_url
 
@@ -185,19 +185,19 @@ class DocumentCreate(LoginRequiredMixin, CreateView):
             self.folder = get_object_or_404(qs, pk=request.GET["f"])
         else:
             self.folder = None
-        return super(DocumentCreate, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         kwargs.setdefault("folder", self.folder)
-        return super(DocumentCreate, self).get_context_data(**kwargs)
+        return super().get_context_data(**kwargs)
 
     def get_initial(self):
         if self.folder:
             self.initial["folder"] = self.folder
-        return super(DocumentCreate, self).get_initial()
+        return super().get_initial()
 
     def get_form_kwargs(self):
-        kwargs = super(DocumentCreate, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs.update({"folders": Folder.objects.for_user(self.request.user),
                        "storage": self.request.user.storage})
         return kwargs
@@ -254,7 +254,7 @@ class DocumentDetail(LoginRequiredMixin, DetailView):
     template_name = "pinax/documents/document_detail.html"
 
     def get_queryset(self):
-        qs = super(DocumentDetail, self).get_queryset()
+        qs = super().get_queryset()
         qs = qs.for_user(self.request.user)
         return qs
 
@@ -263,7 +263,7 @@ class DocumentDownload(LoginRequiredMixin, DetailView):
     model = Document
 
     def get_queryset(self):
-        qs = super(DocumentDownload, self).get_queryset()
+        qs = super().get_queryset()
         qs = qs.for_user(self.request.user)
         return qs
 
@@ -294,6 +294,6 @@ class DocumentDelete(LoginRequiredMixin, DeleteView):
     template_name = "pinax/documents/document_confirm_delete.html"
 
     def delete(self, request, *args, **kwargs):
-        success_url = super(DocumentDelete, self).delete(request, *args, **kwargs)
+        success_url = super().delete(request, *args, **kwargs)
         hookset.document_deleted_message(self.request, self.object)
         return success_url

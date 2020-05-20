@@ -53,16 +53,16 @@ class SharedMemberQuerySet(QuerySet):
     def __init__(self, **kwargs):
         if "user" in kwargs:
             self.user = kwargs.pop("user")
-        super(SharedMemberQuerySet, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
     def iterator(self):
         shared_user_model = self.model.shared_user_model()
         shared_members = shared_user_model.for_user(self.user)
-        for obj in super(SharedMemberQuerySet, self).iterator():
+        for obj in super().iterator():
             if obj.pk in shared_members:
                 obj._shared = True
             yield obj
 
     def _chain(self, **kwargs):
         kwargs["user"] = self.user
-        return super(SharedMemberQuerySet, self)._chain(**kwargs)
+        return super()._chain(**kwargs)
